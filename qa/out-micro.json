@@ -1,0 +1,50 @@
+{
+  "console": [
+    {
+      "level": "log",
+      "text": "[备孕30分钟] v1 就绪：30 阶段 / 1800 秒"
+    }
+  ],
+  "exceptions": [],
+  "beforeFinish": "总剩余 00:01",
+  "finishChime": {
+    "totalBefore": "总剩余 00:01",
+    "totalAfter": "总剩余 00:00",
+    "finishShown": true,
+    "beepsAt0": 2,
+    "beepsAfter900": 0,
+    "speaks": [
+      "训练完成，今天就这样。"
+    ]
+  },
+  "toggles": {
+    "afterSoundOff": "声音 关",
+    "afterVoiceOff": "语音 关",
+    "cls": {
+      "soundCls": "btn off",
+      "voiceCls": "btn"
+    }
+  },
+  "spaceOnFocusedButton": {
+    "focused": "",
+    "beforePlay": "继续",
+    "afterPlay": "暂停",
+    "actionUnchanged": true,
+    "singleToggle": true
+  },
+  "fullscreen": {
+    "bodyClass": "",
+    "fsElement": true,
+    "stillRunning": "暂停",
+    "exceptionsSoFar": 0
+  },
+  "fKeySpam": {
+    "bodyClass": "",
+    "play": "暂停"
+  },
+  "playSpam": {
+    "play": "暂停",
+    "cd": "01:00",
+    "total": "总剩余 30:00"
+  }
+}
