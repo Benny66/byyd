@@ -1,0 +1,244 @@
+{
+  "T1_pause": {
+    "running": "00:58",
+    "paused": "00:58",
+    "after10s": "00:58",
+    "resumed2s": "00:56",
+    "resumed3s": "00:55",
+    "pausedStable": true,
+    "noJumpBack": true,
+    "totalAfter": [
+      "总剩余 29:58",
+      "总剩余 29:56"
+    ]
+  },
+  "T2_next10": {
+    "seq": [
+      {
+        "i": 1,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 2 / 12",
+        "action": "肩绕环 + 髋绕环",
+        "cd": "01:00",
+        "total": "总剩余 29:00",
+        "play": "继续"
+      },
+      {
+        "i": 2,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 3 / 12",
+        "action": "自重深蹲",
+        "cd": "01:00",
+        "total": "总剩余 28:00",
+        "play": "继续"
+      },
+      {
+        "i": 3,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 4 / 12",
+        "action": "跪姿俯卧撑",
+        "cd": "01:00",
+        "total": "总剩余 27:00",
+        "play": "继续"
+      },
+      {
+        "i": 4,
+        "tag": "休息",
+        "status": "第 1 组 · 休息",
+        "action": "休息",
+        "cd": "01:00",
+        "total": "总剩余 26:00",
+        "play": "继续"
+      },
+      {
+        "i": 5,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 5 / 12",
+        "action": "臀桥",
+        "cd": "01:00",
+        "total": "总剩余 25:00",
+        "play": "继续"
+      },
+      {
+        "i": 6,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 6 / 12",
+        "action": "平板支撑",
+        "cd": "01:00",
+        "total": "总剩余 24:00",
+        "play": "继续"
+      },
+      {
+        "i": 7,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 7 / 12",
+        "action": "原地弓步蹲",
+        "cd": "01:00",
+        "total": "总剩余 23:00",
+        "play": "继续"
+      },
+      {
+        "i": 8,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 8 / 12",
+        "action": "鸟狗式",
+        "cd": "01:00",
+        "total": "总剩余 22:00",
+        "play": "继续"
+      },
+      {
+        "i": 9,
+        "tag": "休息",
+        "status": "第 1 组 · 休息",
+        "action": "休息",
+        "cd": "01:00",
+        "total": "总剩余 21:00",
+        "play": "继续"
+      },
+      {
+        "i": 10,
+        "tag": "动作中",
+        "status": "第 1 组 · 动作 9 / 12",
+        "action": "侧点步 + 开合手",
+        "cd": "01:00",
+        "total": "总剩余 20:00",
+        "play": "继续"
+      }
+    ],
+    "afterResume": {
+      "cd": "00:59",
+      "total": "总剩余 19:59",
+      "action": "侧点步 + 开合手"
+    },
+    "allReset60": true
+  },
+  "T3_prevAtFirst": {
+    "before": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "01:00"
+    },
+    "after": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "01:00",
+      "tag": "动作中",
+      "status": "第 1 组 · 动作 1 / 12"
+    },
+    "afterPaused": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "01:00"
+    },
+    "afterRunAgain": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "00:59"
+    },
+    "hasNaN": false
+  },
+  "T4_replay": {
+    "mid": {
+      "action": "侧点步 + 开合手",
+      "cd": "01:00",
+      "total": "总剩余 20:00"
+    },
+    "after": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "01:00",
+      "total": "总剩余 30:00",
+      "status": "第 1 组 · 动作 1 / 12",
+      "play": "暂停"
+    },
+    "ok": true
+  },
+  "T5_jump": {
+    "at0": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "00:59",
+      "total": "总剩余 29:59"
+    },
+    "after125": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "00:59",
+      "total": "总剩余 29:59",
+      "status": "第 1 组 · 动作 1 / 12"
+    },
+    "after725": {
+      "action": "原地踏步 + 摆臂",
+      "cd": "00:58",
+      "total": "总剩余 29:58",
+      "status": "第 1 组 · 动作 1 / 12"
+    },
+    "beepDelta_125": 0,
+    "speakDelta_125": 0,
+    "beepDelta_600": 0,
+    "speakDelta_600": 0,
+    "noBurst": true
+  },
+  "T6_finish": {
+    "state": {
+      "finishShown": false,
+      "cd": "00:55",
+      "total": "总剩余 29:55",
+      "play": "暂停",
+      "tag": "动作中"
+    },
+    "beepBurst": 0,
+    "speakBurst": 0,
+    "speakTexts": [
+      "原地踏步 + 摆臂",
+      "原地踏步 + 摆臂",
+      "原地踏步 + 摆臂",
+      "原地踏步 + 摆臂"
+    ]
+  },
+  "T7_totalConsistency": [
+    {
+      "phaseIndex": 0,
+      "tag": "动作中",
+      "total": "总剩余 30:00",
+      "expect": "总剩余 30:00"
+    },
+    {
+      "phaseIndex": 3,
+      "tag": "动作中",
+      "total": "总剩余 27:00",
+      "expect": "总剩余 27:00"
+    },
+    {
+      "phaseIndex": 4,
+      "tag": "休息",
+      "total": "总剩余 26:00",
+      "expect": "总剩余 26:00"
+    },
+    {
+      "phaseIndex": 5,
+      "tag": "动作中",
+      "total": "总剩余 25:00",
+      "expect": "总剩余 25:00"
+    },
+    {
+      "phaseIndex": 14,
+      "tag": "休息",
+      "total": "总剩余 16:00",
+      "expect": "总剩余 16:00"
+    },
+    {
+      "phaseIndex": 15,
+      "tag": "动作中",
+      "total": "总剩余 15:00",
+      "expect": "总剩余 15:00"
+    },
+    {
+      "phaseIndex": 29,
+      "tag": "休息",
+      "total": "总剩余 01:00",
+      "expect": "总剩余 01:00"
+    }
+  ],
+  "T8_overflow": {
+    "action": "休息",
+    "cd": "01:00",
+    "tag": "休息",
+    "finishShown": false,
+    "status": "第 2 组 · 休息（本组完成）"
+  },
+  "console": null
+}

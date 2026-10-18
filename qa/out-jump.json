@@ -1,0 +1,102 @@
+{
+  "T5_jump125": {
+    "start": {
+      "label": "start",
+      "tag": "动作中",
+      "status": "第 1 组 · 动作 1 / 12",
+      "action": "原地踏步 + 摆臂",
+      "cd": "01:00",
+      "total": "总剩余 30:00",
+      "play": "暂停",
+      "finish": false
+    },
+    "after": {
+      "label": "+125s",
+      "tag": "动作中",
+      "status": "第 1 组 · 动作 3 / 12",
+      "action": "自重深蹲",
+      "cd": "00:55",
+      "total": "总剩余 27:55",
+      "play": "暂停",
+      "finish": false
+    },
+    "beepDelta": 0,
+    "speakDelta": 0,
+    "noSoundBurst": true
+  },
+  "T5b_jump725": {
+    "after": {
+      "label": "+725s total",
+      "tag": "动作中",
+      "status": "第 1 组 · 动作 11 / 12",
+      "action": "靠墙静蹲",
+      "cd": "00:54",
+      "total": "总剩余 17:54",
+      "play": "暂停",
+      "finish": false
+    },
+    "beepDelta": 0,
+    "speakDelta": 0,
+    "noSoundBurst": true
+  },
+  "T6_finish": {
+    "state": {
+      "label": "finish",
+      "tag": "动作中",
+      "status": "第 1 组 · 动作 11 / 12",
+      "action": "靠墙静蹲",
+      "cd": "00:00",
+      "total": "总剩余 00:00",
+      "play": "开始",
+      "finish": true
+    },
+    "finishBeeps": 0,
+    "finishSpeaks": 1,
+    "speakTail": [
+      "原地踏步 + 摆臂",
+      "训练完成，今天就这样。"
+    ],
+    "finishSoundOk": false
+  },
+  "T6b_again": {
+    "label": "after 再来一遍",
+    "tag": "动作中",
+    "status": "第 1 组 · 动作 1 / 12",
+    "action": "原地踏步 + 摆臂",
+    "cd": "01:00",
+    "total": "总剩余 30:00",
+    "play": "暂停",
+    "finish": false
+  },
+  "T9_nextWhileRunning": {
+    "steps": [
+      "第 1 组 · 动作 2 / 12|01:00|总剩余 29:00",
+      "第 1 组 · 动作 3 / 12|01:00|总剩余 28:00",
+      "第 1 组 · 动作 4 / 12|01:00|总剩余 27:00",
+      "第 1 组 · 休息|01:00|总剩余 26:00",
+      "第 1 组 · 动作 5 / 12|01:00|总剩余 25:00"
+    ],
+    "afterRun": "第 1 组 · 动作 5 / 12|00:59|总剩余 24:59",
+    "eachReset60": true
+  },
+  "T10_prevWhileRunning": {
+    "before": "第 1 组 · 动作 5 / 12",
+    "after": "第 1 组 · 休息",
+    "cd": "01:00",
+    "runningAfter": "00:59",
+    "consistent": true
+  },
+  "T11_pauseThenSkip": {
+    "paused": "00:59",
+    "afterNext": "01:00",
+    "resumed": "00:59",
+    "ok": true
+  },
+  "T12_toggle": {
+    "ls": "{\"soundOn\":false,\"voiceOn\":true}"
+  },
+  "T13_wakelock": {
+    "supported": true,
+    "hidden": false
+  }
+}

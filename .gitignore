@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# 环境变量与本地配置
+.env
+.env.local
+
+# 编辑器
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,457 @@
+{
+  "console": [
+    {
+      "level": "log",
+      "text": "[备孕30分钟] v1 就绪：30 阶段 / 1800 秒"
+    }
+  ],
+  "exceptions": [],
+  "structure": {
+    "phaseCount": 30,
+    "exerciseCount": 24,
+    "restCount": 6,
+    "totalSeconds": 1800,
+    "allDurations60": true,
+    "restAfterExerciseNo": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24
+    ],
+    "groupEndCumSec": [
+      {
+        "restAt": 14,
+        "cumSec": 900
+      },
+      {
+        "restAt": 29,
+        "cumSec": 1800
+      }
+    ],
+    "exNames": [
+      "原地踏步 + 摆臂",
+      "肩绕环 + 髋绕环",
+      "自重深蹲",
+      "跪姿俯卧撑",
+      "臀桥",
+      "平板支撑",
+      "原地弓步蹲",
+      "鸟狗式",
+      "侧点步 + 开合手",
+      "死虫式",
+      "靠墙静蹲",
+      "站姿提膝触肘",
+      "相扑深蹲",
+      "单腿臀桥",
+      "站姿凯格尔",
+      "慢速高抬腿",
+      "后撤步弓步",
+      "自重髋铰链",
+      "侧向弓步",
+      "侧平板支撑",
+      "提踵 + 单腿平衡",
+      "蚌式开合",
+      "婴儿式 + 髋屈肌拉伸",
+      "仰卧腹式呼吸"
+    ],
+    "groupsPerPhase": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "cum": [
+      0,
+      60,
+      120,
+      180,
+      240,
+      300,
+      360,
+      420,
+      480,
+      540,
+      600,
+      660,
+      720,
+      780,
+      840,
+      900,
+      960,
+      1020,
+      1080,
+      1140,
+      1200,
+      1260,
+      1320,
+      1380,
+      1440,
+      1500,
+      1560,
+      1620,
+      1680,
+      1740
+    ],
+    "firstHalfPhases": 15,
+    "secondHalfPhases": 15
+  },
+  "empirical": {
+    "walk": [
+      {
+        "tag": "动作中",
+        "action": "原地踏步 + 摆臂",
+        "status": "第 1 组 · 动作 1 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "肩绕环 + 髋绕环",
+        "status": "第 1 组 · 动作 2 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "自重深蹲",
+        "status": "第 1 组 · 动作 3 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "跪姿俯卧撑",
+        "status": "第 1 组 · 动作 4 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "休息",
+        "action": "休息",
+        "status": "第 1 组 · 休息",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "臀桥",
+        "status": "第 1 组 · 动作 5 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "平板支撑",
+        "status": "第 1 组 · 动作 6 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "原地弓步蹲",
+        "status": "第 1 组 · 动作 7 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "鸟狗式",
+        "status": "第 1 组 · 动作 8 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "休息",
+        "action": "休息",
+        "status": "第 1 组 · 休息",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "侧点步 + 开合手",
+        "status": "第 1 组 · 动作 9 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "死虫式",
+        "status": "第 1 组 · 动作 10 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "靠墙静蹲",
+        "status": "第 1 组 · 动作 11 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "站姿提膝触肘",
+        "status": "第 1 组 · 动作 12 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "休息",
+        "action": "休息",
+        "status": "第 1 组 · 休息（本组完成）",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "相扑深蹲",
+        "status": "第 2 组 · 动作 1 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "单腿臀桥",
+        "status": "第 2 组 · 动作 2 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "站姿凯格尔",
+        "status": "第 2 组 · 动作 3 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "慢速高抬腿",
+        "status": "第 2 组 · 动作 4 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "休息",
+        "action": "休息",
+        "status": "第 2 组 · 休息",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "后撤步弓步",
+        "status": "第 2 组 · 动作 5 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "自重髋铰链",
+        "status": "第 2 组 · 动作 6 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "侧向弓步",
+        "status": "第 2 组 · 动作 7 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "侧平板支撑",
+        "status": "第 2 组 · 动作 8 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "休息",
+        "action": "休息",
+        "status": "第 2 组 · 休息",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "提踵 + 单腿平衡",
+        "status": "第 2 组 · 动作 9 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "蚌式开合",
+        "status": "第 2 组 · 动作 10 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "婴儿式 + 髋屈肌拉伸",
+        "status": "第 2 组 · 动作 11 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "动作中",
+        "action": "仰卧腹式呼吸",
+        "status": "第 2 组 · 动作 12 / 12",
+        "countdown": "01:00"
+      },
+      {
+        "tag": "休息",
+        "action": "休息",
+        "status": "第 2 组 · 休息（本组完成）",
+        "countdown": "01:00"
+      }
+    ],
+    "keyboard": {
+      "afterReplay": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 30:00",
+        "status": "第 1 组 · 动作 1 / 12",
+        "action": "原地踏步 + 摆臂",
+        "tips": "抬膝到腰高，手臂自然前后摆，脚掌轻落地",
+        "tipsLabelDisplay": "",
+        "breathe": "鼻吸口呼，节奏均匀",
+        "next": "下一个：肩绕环 + 髋绕环",
+        "playLabel": "暂停",
+        "sound": "声音 开",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 4,
+        "speaks": 2
+      },
+      "afterSpace": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 30:00",
+        "status": "第 1 组 · 动作 1 / 12",
+        "action": "原地踏步 + 摆臂",
+        "tips": "抬膝到腰高，手臂自然前后摆，脚掌轻落地",
+        "tipsLabelDisplay": "",
+        "breathe": "鼻吸口呼，节奏均匀",
+        "next": "下一个：肩绕环 + 髋绕环",
+        "playLabel": "继续",
+        "sound": "声音 开",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 4,
+        "speaks": 2
+      },
+      "afterArrowRight": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 29:00",
+        "status": "第 1 组 · 动作 2 / 12",
+        "action": "肩绕环 + 髋绕环",
+        "tips": "肩向后大圈 30 秒，髋部画圈 30 秒，幅度由小到大",
+        "tipsLabelDisplay": "",
+        "breathe": "绕环吸气，回位呼气",
+        "next": "下一个：自重深蹲",
+        "playLabel": "继续",
+        "sound": "声音 开",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 4,
+        "speaks": 2
+      },
+      "afterArrowLeft": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 30:00",
+        "status": "第 1 组 · 动作 1 / 12",
+        "action": "原地踏步 + 摆臂",
+        "tips": "抬膝到腰高，手臂自然前后摆，脚掌轻落地",
+        "tipsLabelDisplay": "",
+        "breathe": "鼻吸口呼，节奏均匀",
+        "next": "下一个：肩绕环 + 髋绕环",
+        "playLabel": "继续",
+        "sound": "声音 开",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 4,
+        "speaks": 2
+      },
+      "afterM": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 30:00",
+        "status": "第 1 组 · 动作 1 / 12",
+        "action": "原地踏步 + 摆臂",
+        "tips": "抬膝到腰高，手臂自然前后摆，脚掌轻落地",
+        "tipsLabelDisplay": "",
+        "breathe": "鼻吸口呼，节奏均匀",
+        "next": "下一个：肩绕环 + 髋绕环",
+        "playLabel": "继续",
+        "sound": "声音 关",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 4,
+        "speaks": 2
+      },
+      "afterEnter": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 30:00",
+        "status": "第 1 组 · 动作 1 / 12",
+        "action": "原地踏步 + 摆臂",
+        "tips": "抬膝到腰高，手臂自然前后摆，脚掌轻落地",
+        "tipsLabelDisplay": "",
+        "breathe": "鼻吸口呼，节奏均匀",
+        "next": "下一个：肩绕环 + 髋绕环",
+        "playLabel": "暂停",
+        "sound": "声音 开",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 5,
+        "speaks": 2
+      },
+      "afterR": {
+        "phase": "exercise",
+        "tag": "动作中",
+        "countdown": "01:00",
+        "totalLeft": "总剩余 30:00",
+        "status": "第 1 组 · 动作 1 / 12",
+        "action": "原地踏步 + 摆臂",
+        "tips": "抬膝到腰高，手臂自然前后摆，脚掌轻落地",
+        "tipsLabelDisplay": "",
+        "breathe": "鼻吸口呼，节奏均匀",
+        "next": "下一个：肩绕环 + 髋绕环",
+        "playLabel": "暂停",
+        "sound": "声音 开",
+        "voice": "语音 开",
+        "finishShown": false,
+        "beeps": 7,
+        "speaks": 3
+      }
+    }
+  },
+  "env": {
+    "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+    "innerW": 1920,
+    "innerH": 937,
+    "hasWakeLock": true,
+    "hasFS": true,
+    "hasAudio": true,
+    "hasSpeech": true,
+    "hasRAF": true,
+    "scrollW": 1920,
+    "scrollH": 937,
+    "consoleFromPage": [
+      {
+        "level": "log",
+        "text": "[备孕30分钟] v1 就绪：30 阶段 / 1800 秒"
+      }
+    ]
+  },
+  "procOk": true
+}

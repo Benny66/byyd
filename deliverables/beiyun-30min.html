@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>备孕 30 分钟 · 每日训练</title>
+<style>
+/* ==========================================================================
+   0. 基础重置 / 防滚动 / 安全区
+   ========================================================================== */
+*{ -webkit-box-sizing:border-box; box-sizing:border-box; }
+
+html, body{
+  height:100%;
+  width:100%;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background:#0b0d12;
+  color:#f7f8fb;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+  -webkit-user-select:none;
+  user-select:none;
+  font-family:-apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+              "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC",
+              "WenQuanYi Micro Hei", "Heiti SC", sans-serif;
+}
+
+/* ==========================================================================
+   1. 主题变量（动作 = 暖色 / 休息 = 冷色）
+   ========================================================================== */
+:root{
+  --f-count: 9.6vmin;   /* 倒计时：屏上最大元素 */
+  --f-name: 6.2vmin;    /* 动作名 */
+  --f-tips: 2.85vmin;   /* 要点 / 呼吸（约动作名的 1/2.2，保证 3 米外可读） */
+  --f-small: 2.5vmin;   /* 顶部状态、下一个 */
+  --f-btn: 2.35vmin;    /* 控制栏按钮 */
+  --f-tag: 1.9vmin;     /* 小标签 */
+  --ring: 40vmin;       /* 环形直径 */
+  --pb-h: 1.5vmin;      /* 底部进度条高度 */
+  --radius: 1.6vmin;
+  --pad: 3vmin;
+}
+
+.app{
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  /* 先给不支持 env() 的老浏览器一个兜底，再用带安全区的版本覆盖 */
+  padding:2vmin 3vmin;
+  padding-top:calc(1.8vmin + env(safe-area-inset-top, 0px));
+  padding-right:calc(var(--pad) + env(safe-area-inset-right, 0px));
+  padding-bottom:calc(1.8vmin + env(safe-area-inset-bottom, 0px));
+  padding-left:calc(var(--pad) + env(safe-area-inset-left, 0px));
+  background:#0b0d12;
+  background-image:radial-gradient(circle at 50% 34%, var(--bg-glow, rgba(255,166,43,.13)) 0%, rgba(0,0,0,0) 62%);
+  -webkit-transition:background-color .4s ease, background-image .4s ease;
+  transition:background-color .4s ease, background-image .4s ease;
+}
+
+.app[data-phase="exercise"]{
+  --main:#ffa62b;
+  --main-soft:#ffd166;
+  --bg-glow:rgba(255,166,43,.14);
+  --bg-base:#0c0a07;
+}
+.app[data-phase="rest"]{
+  --main:#2ee6d6;
+  --main-soft:#8af3e9;
+  --bg-glow:rgba(46,230,214,.13);
+  --bg-base:#050d10;
+}
+.app[data-phase="exercise"]{ background-color:#0c0a07; }
+.app[data-phase="rest"]{ background-color:#050d10; }
+
+/* ==========================================================================
+   2. 顶部状态条
+   ========================================================================== */
+.topbar{
+  flex:0 0 auto;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  width:100%;
+  padding:0 1vmin;
+}
+.status-text{
+  font-size:var(--f-small);
+  font-weight:700;
+  letter-spacing:.06em;
+  color:#e9edf7;
+  opacity:.92;
+}
+.status-text .dot{
+  display:inline-block;
+  width:.75em; height:.75em;
+  border-radius:50%;
+  background:var(--main);
+  margin-right:.55em;
+  vertical-align:.02em;
+  -webkit-transition:background-color .4s ease;
+  transition:background-color .4s ease;
+}
+.topbar-right{
+  display:flex;
+  align-items:baseline;
+}
+.total-left{
+  font-size:var(--f-small);
+  font-variant-numeric:tabular-nums;
+  -webkit-font-feature-settings:"tnum" 1;
+  font-feature-settings:"tnum" 1;
+  color:#a9b1c3;
+  letter-spacing:.05em;
+}
+.ver{
+  font-size:calc(var(--f-small) * .72);
+  color:#5d6478;
+  margin-left:.9em;
+  letter-spacing:.08em;
+}
+
+/* ==========================================================================
+   3. 中间主视觉：环形进度 + 倒计时
+   ========================================================================== */
+.stage{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.ring-wrap{
+  position:relative;
+  flex:0 0 auto;
+  width:var(--ring);
+  height:var(--ring);
+  margin:1.2vmin 0 0;
+}
+.ring{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+.ring-track{
+  fill:none;
+  stroke:rgba(255,255,255,.10);
+  stroke-width:14;
+}
+.ring-fill{
+  fill:none;
+  stroke:var(--main);
+  stroke-width:14;
+  stroke-linecap:round;
+  -webkit-transition:stroke .4s ease;
+  transition:stroke .4s ease;
+}
+.ring-glow{
+  fill:none;
+  stroke:var(--main);
+  stroke-width:14;
+  stroke-linecap:round;
+  opacity:.22;
+  -webkit-filter:blur(6px);
+  filter:blur(6px);
+  -webkit-transition:stroke .4s ease;
+  transition:stroke .4s ease;
+}
+
+.ring-text{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+.phase-tag{
+  font-size:var(--f-tag);
+  letter-spacing:.42em;
+  text-indent:.42em;
+  font-weight:700;
+  color:var(--main);
+  opacity:.9;
+  margin-bottom:.5vmin;
+  -webkit-transition:color .4s ease;
+  transition:color .4s ease;
+}
+.countdown{
+  font-size:var(--f-count);
+  line-height:1;
+  font-weight:800;
+  color:#ffffff;
+  letter-spacing:.01em;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-feature-settings:"tnum" 1;
+  font-feature-settings:"tnum" 1;
+  text-shadow:0 0 3vmin var(--bg-glow, rgba(255,166,43,.14));
+  white-space:nowrap;
+}
+
+/* ==========================================================================
+   4. 动作名 / 要点 / 呼吸 / 下一个
+   ========================================================================== */
+.info{
+  flex:0 0 auto;
+  width:100%;
+  max-width:94%;
+  margin:1.6vmin auto 0;
+  text-align:center;
+}
+.action-name{
+  margin:0;
+  font-size:var(--f-name);
+  line-height:1.18;
+  font-weight:800;
+  letter-spacing:.01em;
+  color:#ffffff;
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+}
+.line{
+  margin:.9vmin 0 0;
+  font-size:var(--f-tips);
+  line-height:1.4;
+  color:#c7cede;
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+}
+.line .label{
+  display:inline-block;
+  font-size:.82em;
+  font-weight:700;
+  color:var(--main);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:.5vmin;
+  padding:.12em .5em;
+  margin-right:.55em;
+  vertical-align:.04em;
+  -webkit-transition:color .4s ease, border-color .4s ease;
+  transition:color .4s ease, border-color .4s ease;
+}
+.line.breathe .label{
+  color:var(--main-soft);
+}
+.next-line{
+  flex:0 0 auto;
+  margin:1.2vmin 0 0;
+  font-size:var(--f-small);
+  color:#8d95a8;
+  letter-spacing:.06em;
+  text-align:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:94%;
+}
+.next-line b{
+  color:#e9edf7;
+  font-weight:700;
+}
+
+/* ==========================================================================
+   5. 底部：整体进度条 + 控制栏
+   ========================================================================== */
+.bottombar{
+  flex:0 0 auto;
+  width:100%;
+}
+
+.progress{
+  position:relative;
+  width:100%;
+  height:var(--pb-h);
+  margin-bottom:1.4vmin;
+}
+.pb-track, .pb-fill{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  display:flex;
+  flex-direction:row;
+  overflow:hidden;
+  border-radius:999px;
+}
+.pb-seg{
+  flex:1 1 0;
+  height:100%;
+  margin-right:2px;
+  border-radius:1px;
+  background:rgba(255,255,255,.15);
+}
+.pb-seg:last-child{ margin-right:0; }
+.pb-seg-rest{ background:rgba(46,230,214,.42); }
+
+.pb-fill{
+  -webkit-clip-path:inset(0 100% 0 0);
+  clip-path:inset(0 100% 0 0);
+}
+/* 已完成的段用固定暖/冷色：一眼看出"练了几段、休了几段"，与当前阶段配色无关 */
+.pb-fill .pb-seg{ background:#ffa62b; }
+.pb-fill .pb-seg-rest{ background:#2ee6d6; }
+
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+}
+.btn{
+  -webkit-appearance:none;
+  appearance:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin:.45vmin;
+  padding:.85em 1.15em;
+  font-family:inherit;
+  font-size:var(--f-btn);
+  font-weight:700;
+  line-height:1;
+  color:#e9edf7;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  cursor:pointer;
+  white-space:nowrap;
+  -webkit-transition:background-color .18s ease, border-color .18s ease, -webkit-transform .12s ease;
+  transition:background-color .18s ease, border-color .18s ease, transform .12s ease;
+}
+.btn .ico{
+  width:1.15em;
+  height:1.15em;
+  margin-right:.42em;
+  fill:currentColor;
+  flex:0 0 auto;
+}
+.btn:active{ -webkit-transform:scale(.97); transform:scale(.97); }
+.btn:focus{ outline:4px solid #ffffff; outline-offset:3px; }
+.btn:focus:not(:focus-visible){ outline:none; }
+.btn:focus-visible{ outline:4px solid #ffffff; outline-offset:3px; box-shadow:0 0 0 8px rgba(255,255,255,.16); }
+
+.btn-main{
+  padding:1em 1.9em;
+  font-size:calc(var(--f-btn) * 1.28);
+  color:#1a1206;
+  background:#ffffff;
+  border-color:#ffffff;
+}
+.app[data-phase="rest"] .btn-main{ color:#04201f; }
+.btn-main .ico{ margin-right:.46em; }
+.btn.off{
+  color:#7c8496;
+  background:rgba(255,255,255,.03);
+  border-color:rgba(255,255,255,.08);
+}
+.ico.hide{ display:none; }
+
+/* ==========================================================================
+   6. 完成屏
+   ========================================================================== */
+.finish{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:6vmin;
+  background:#080a0f;
+  background-image:radial-gradient(circle at 50% 42%, rgba(255,166,43,.16) 0%, rgba(0,0,0,0) 60%);
+  z-index:20;
+}
+.finish.show{ display:flex; }
+.finish-title{
+  font-size:calc(var(--f-count) * 1.05);
+  line-height:1.1;
+  font-weight:800;
+  color:#ffffff;
+}
+.finish-sub{
+  margin:2.2vmin 0 0;
+  font-size:var(--f-name);
+  font-weight:600;
+  color:var(--main-soft);
+}
+.finish-warn{
+  margin:1.8vmin 0 0;
+  font-size:var(--f-tips);
+  color:#8d95a8;
+  line-height:1.5;
+}
+.finish .btn{
+  margin-top:4vmin;
+}
+
+/* ==========================================================================
+   7. 伪全屏（无 Fullscreen API 时的降级）
+   ========================================================================== */
+body.pseudo-fullscreen .ver{ display:none; }
+body.pseudo-fullscreen .app{ padding:1.5vmin; }
+
+/* 阻止任何滚动容器出现 */
+.no-scroll{ touch-action:none; }
+
+/* ==========================================================================
+   8. 设备适配
+   ========================================================================== */
+/* 手机竖屏：控制栏换行、字号按宽度放大 */
+@media (orientation: portrait) and (max-width: 640px){
+  :root{
+    --f-count: 15vmin;
+    --f-name: 8.8vmin;
+    --f-tips: 4.5vmin;
+    --f-small: 3.4vmin;
+    --f-btn: 3.5vmin;
+    --f-tag: 2.2vmin;
+    --ring: 64vw;
+    --pb-h: 7px;
+    --pad: 3.4vw;
+  }
+  .controls .btn{ padding:.8em 1em; margin:.4vmin; }
+  .btn-main{ padding:.95em 1.5em; }
+  .line{ margin:.7vmin 0 0; line-height:1.35; }
+  .next-line{ margin-top:1vmin; }
+}
+/* 手机横屏 / 极矮视口：压扁环，保证不溢出 */
+@media (max-height: 460px) and (orientation: landscape){
+  :root{
+    --f-count: 13vmin;
+    --f-name: 7vmin;
+    --f-tips: 4vmin;
+    --f-small: 3.2vmin;
+    --f-btn: 3.4vmin;
+    --ring: 52vmin;
+  }
+  .line{ margin:.5vmin 0 0; }
+  .action-name{ line-height:1.1; }
+}
+/* 大电视：留白稍多一点，避免贴边 */
+@media (min-width: 1700px){
+  :root{ --ring:42vmin; --f-count:10vmin; --f-name:6.6vmin; }
+}
+
+/* 尊重系统的减少动态效果偏好 */
+@media (prefers-reduced-motion: reduce){
+  .app, .ring-fill, .ring-glow, .btn, .phase-tag, .line .label{ -webkit-transition:none; transition:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="app no-scroll" id="app" data-phase="exercise">
+
+  <!-- ---------- 顶部状态条 ---------- -->
+  <header class="topbar">
+    <div class="status-text"><span class="dot"></span><span id="statusText">第 1 组 · 动作 1 / 12</span></div>
+    <div class="topbar-right">
+      <div class="total-left" id="totalLeft">总剩余 30:00</div>
+      <div class="ver">v1</div>
+    </div>
+  </header>
+
+  <!-- ---------- 中间主视觉 ---------- -->
+  <section class="stage">
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        <circle class="ring-track" cx="100" cy="100" r="86"></circle>
+        <circle class="ring-glow" id="ringGlow" cx="100" cy="100" r="86" transform="rotate(-90 100 100)"></circle>
+        <circle class="ring-fill" id="ringFill" cx="100" cy="100" r="86" transform="rotate(-90 100 100)"></circle>
+      </svg>
+      <div class="ring-text">
+        <div class="phase-tag" id="phaseTag">动作中</div>
+        <div class="countdown" id="countdown">01:00</div>
+      </div>
+    </div>
+
+    <div class="info">
+      <h1 class="action-name" id="actionName">原地踏步 + 摆臂</h1>
+      <p class="line tips" id="tipsText"><span class="label" id="tipsLabel">要点</span><span id="tipsBody">抬膝到腰高，手臂自然前后摆，脚掌轻落地</span></p>
+      <p class="line breathe" id="breatheText"><span class="label">呼吸</span><span id="breatheBody">鼻吸口呼，节奏均匀</span></p>
+    </div>
+
+    <div class="next-line" id="nextLine">下一个：<b>肩绕环 + 髋绕环</b></div>
+  </section>
+
+  <!-- ---------- 底部：进度条 + 控制栏 ---------- -->
+  <footer class="bottombar">
+    <div class="progress" id="progress">
+      <div class="pb-track" id="pbTrack"></div>
+      <div class="pb-fill" id="pbFill"></div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-main" id="btnPlay" type="button">
+        <svg class="ico" id="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="ico hide" id="icoPause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        <span id="btnPlayLabel">开始</span>
+      </button>
+      <button class="btn" id="btnPrev" type="button">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14l-11-7z"/></svg>
+        <span>上一个</span>
+      </button>
+      <button class="btn" id="btnNext" type="button">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z"/></svg>
+        <span>下一个</span>
+      </button>
+      <button class="btn" id="btnReplay" type="button">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V1L7 6l5 5V6a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg>
+        <span>重播</span>
+      </button>
+      <button class="btn" id="btnSound" type="button">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h3.6L13 20V4L7.6 9H4z"/><path d="M16.2 8.4a5 5 0 0 1 0 7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span id="btnSoundLabel">声音 开</span>
+      </button>
+      <button class="btn" id="btnVoice" type="button">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6a3.2 3.2 0 0 1 3.2 3.2v5.4a3.2 3.2 0 0 1-6.4 0V5.8A3.2 3.2 0 0 1 12 2.6zm7 8.6a1 1 0 0 1 1 1 8 8 0 0 1-7 7.94V22h-2v-1.86A8 8 0 0 1 4 12.2a1 1 0 0 1 2 0 6 6 0 0 0 12 0 1 1 0 0 1 1-1z"/></svg>
+        <span id="btnVoiceLabel">语音 开</span>
+      </button>
+      <button class="btn" id="btnFull" type="button">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5h7v2.2H5.7v4.8H3.5V3.5zm10 0h7v7h-2.2V5.7h-4.8V3.5zM3.5 13.5h2.2v4.8h4.8v2.2h-7v-7zm14.8 0h2.2v7h-7v-2.2h4.8v-4.8z"/></svg>
+        <span>全屏</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ---------- 完成屏 ---------- -->
+  <div class="finish" id="finish" role="dialog" aria-label="训练完成">
+    <div class="finish-title">30 分钟完成</div>
+    <div class="finish-sub">今天就这样，明天同一时间。</div>
+    <div class="finish-warn">强度以能正常说话为准，出现不适立即停止。</div>
+    <button class="btn btn-main" id="btnAgain" type="button">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V1L7 6l5 5V6a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg>
+      <span>再来一遍</span>
+    </button>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ======================================================================
+     1. 数据结构：24 个动作 + 时间轴
+     ====================================================================== */
+
+  var PHASE_SECONDS = 60;   // 一个动作 / 一次休息 都是 60 秒
+
+  var EXERCISES = [
+    /* ---------- 第 1 组 · 唤醒与上肢核心 ---------- */
+    { name: '原地踏步 + 摆臂', tips: '抬膝到腰高，手臂自然前后摆，脚掌轻落地',
+      breathe: '鼻吸口呼，节奏均匀', group: 1, indexInGroup: 1 },
+    { name: '肩绕环 + 髋绕环', tips: '肩向后大圈 30 秒，髋部画圈 30 秒，幅度由小到大',
+      breathe: '绕环吸气，回位呼气', group: 1, indexInGroup: 2 },
+    { name: '自重深蹲', tips: '脚与肩同宽，膝盖对准脚尖，蹲到大腿接近平行，起身夹臀',
+      breathe: '下蹲吸气，起身呼气', group: 1, indexInGroup: 3 },
+    { name: '跪姿俯卧撑', tips: '双手略宽于肩，身体成一条线，胸口离地一拳',
+      breathe: '下落吸气，推起呼气', group: 1, indexInGroup: 4 },
+    { name: '臀桥', tips: '脚跟离臀一掌，顶起时夹紧臀部 2 秒，不要塌腰',
+      breathe: '顶起呼气，落下吸气', group: 1, indexInGroup: 5 },
+    { name: '平板支撑', tips: '肘在肩正下方，收腹夹臀，别塌腰别撅屁股',
+      breathe: '小口均匀呼吸，不憋气', group: 1, indexInGroup: 6 },
+    { name: '原地弓步蹲', tips: '前后脚交替，前膝不超过脚尖，后膝朝地面',
+      breathe: '下沉吸气，站起呼气', group: 1, indexInGroup: 7 },
+    { name: '鸟狗式', tips: '对侧手脚同时伸直，腰背保持水平，慢起慢落',
+      breathe: '伸出呼气，收回吸气', group: 1, indexInGroup: 8 },
+    { name: '侧点步 + 开合手', tips: '左右点步，手臂同步上举，低冲击、落地无声',
+      breathe: '跟上节奏，自然呼吸', group: 1, indexInGroup: 9 },
+    { name: '死虫式', tips: '腰贴地，对侧手脚缓慢伸展，全程不拱腰',
+      breathe: '伸出呼气，收回吸气', group: 1, indexInGroup: 10 },
+    { name: '靠墙静蹲', tips: '背贴墙，大腿接近水平，膝盖约 90 度',
+      breathe: '匀速呼吸，不憋气', group: 1, indexInGroup: 11 },
+    { name: '站姿提膝触肘', tips: '对侧肘膝相碰，转体时腹部发力',
+      breathe: '碰肘呼气，回位吸气', group: 1, indexInGroup: 12 },
+
+    /* ---------- 第 2 组 · 下肢与骨盆 ---------- */
+    { name: '相扑深蹲', tips: '双脚宽于肩、脚尖外八，蹲时膝盖顺脚尖打开',
+      breathe: '下蹲吸气，起身夹臀呼气', group: 2, indexInGroup: 1 },
+    { name: '单腿臀桥', tips: '左右各 30 秒，一腿伸直，骨盆保持水平不歪',
+      breathe: '顶起呼气，落下吸气', group: 2, indexInGroup: 2 },
+    { name: '站姿凯格尔', tips: '像憋尿一样收缩盆底肌 5 秒、放松 5 秒，腹部大腿不发力',
+      breathe: '正常呼吸，别屏气', group: 2, indexInGroup: 3 },
+    { name: '慢速高抬腿', tips: '交替抬膝到腰高，控制节奏，不追求速度',
+      breathe: '抬腿呼气，落腿吸气', group: 2, indexInGroup: 4 },
+    { name: '后撤步弓步', tips: '左右交替后撤，前腿发力站起，重心稳定',
+      breathe: '后撤吸气，站起呼气', group: 2, indexInGroup: 5 },
+    { name: '自重髋铰链', tips: '屈髋向后送臀，背部挺直，感受大腿后侧拉伸',
+      breathe: '下放吸气，起身呼气', group: 2, indexInGroup: 6 },
+    { name: '侧向弓步', tips: '左右交替，向侧跨步屈膝，另一腿伸直',
+      breathe: '跨步吸气，蹬回呼气', group: 2, indexInGroup: 7 },
+    { name: '侧平板支撑', tips: '左右各 30 秒，肘在肩下，髋部顶高成一条线',
+      breathe: '均匀呼吸，不塌髋', group: 2, indexInGroup: 8 },
+    { name: '提踵 + 单腿平衡', tips: '踮到最高停 1 秒，落下要控制，可扶墙',
+      breathe: '踮起呼气，落下吸气', group: 2, indexInGroup: 9 },
+    { name: '蚌式开合', tips: '侧卧屈膝，脚跟并拢，膝盖向上打开，骨盆不后翻',
+      breathe: '打开呼气，合拢吸气', group: 2, indexInGroup: 10 },
+    { name: '婴儿式 + 髋屈肌拉伸', tips: '跪坐前趴深呼吸，换弓步位各拉髋前侧 20 秒',
+      breathe: '拉长呼气，放松下沉', group: 2, indexInGroup: 11 },
+    { name: '仰卧腹式呼吸', tips: '一手放腹部，吸气 4 秒、停 2 秒、呼气 6 秒',
+      breathe: '鼻吸口呼，腹部起伏', group: 2, indexInGroup: 12 }
+  ];
+
+  /**
+   * 构建整条时间轴：动作1-4 → 休息 → 动作5-8 → 休息 → ... → 动作21-24 → 休息
+   * 共 24 动作 + 6 休息 = 30 个阶段，每阶段 60 秒，总计 1800 秒。
+   * @return {Array<Object>} 阶段列表，元素结构见下方注释
+   */
+  function buildTimeline() {
+    var phases = [];
+    var actionsPerRest = 4;
+    for (var i = 0; i < EXERCISES.length; i++) {
+      var ex = EXERCISES[i];
+      phases.push({
+        type: 'exercise',        // 'exercise' | 'rest'
+        duration: PHASE_SECONDS,
+        exercise: ex,
+        group: ex.group,
+        endsGroup: false
+      });
+      var isRestPoint = ((i + 1) % actionsPerRest === 0);
+      if (isRestPoint) {
+        phases.push({
+          type: 'rest',
+          duration: PHASE_SECONDS,
+          exercise: null,
+          group: ex.group,
+          endsGroup: (ex.indexInGroup === 12)   // 第 12 / 24 个动作后的休息 = 本组结束
+        });
+      }
+    }
+    return phases;
+  }
+
+  var PHASES = buildTimeline();
+
+  /** 每个阶段开始的累计秒数（用于总进度与总剩余） */
+  var CUM_START = (function () {
+    var arr = [];
+    var acc = 0;
+    for (var i = 0; i < PHASES.length; i++) {
+      arr.push(acc);
+      acc += PHASES[i].duration;
+    }
+    return arr;
+  })();
+
+  var TOTAL_SECONDS = (function () {
+    var acc = 0;
+    for (var i = 0; i < PHASES.length; i++) { acc += PHASES[i].duration; }
+    return acc;
+  })();
+
+  /* ======================================================================
+     2. 工具函数
+     ====================================================================== */
+
+  /** 秒数格式化为 mm:ss（向上取整，与倒计时习惯一致） */
+  function fmtTime(sec) {
+    var s = Math.ceil(sec - 0.000001);
+    if (s < 0) { s = 0; }
+    var m = Math.floor(s / 60);
+    var r = s % 60;
+    var mm = m < 10 ? ('0' + m) : String(m);
+    var ss = r < 10 ? ('0' + r) : String(r);
+    return mm + ':' + ss;
+  }
+
+  function clamp(v, min, max) {
+    if (v < min) { return min; }
+    if (v > max) { return max; }
+    return v;
+  }
+
+  /* ======================================================================
+     3. DOM 引用
+     ====================================================================== */
+
+  var appEl      = document.getElementById('app');
+  var statusText = document.getElementById('statusText');
+  var totalLeft  = document.getElementById('totalLeft');
+  var phaseTag   = document.getElementById('phaseTag');
+  var countdownEl= document.getElementById('countdown');
+  var ringFillEl = document.getElementById('ringFill');
+  var ringGlowEl = document.getElementById('ringGlow');
+  var actionName = document.getElementById('actionName');
+  var tipsLabel  = document.getElementById('tipsLabel');
+  var tipsBody   = document.getElementById('tipsBody');
+  var breatheBody= document.getElementById('breatheBody');
+  var nextLineEl = document.getElementById('nextLine');
+  var pbTrack    = document.getElementById('pbTrack');
+  var pbFillEl   = document.getElementById('pbFill');
+  var finishEl   = document.getElementById('finish');
+  var btnPlay    = document.getElementById('btnPlay');
+  var btnPlayLabel = document.getElementById('btnPlayLabel');
+  var icoPlay     = document.getElementById('icoPlay');
+  var icoPause    = document.getElementById('icoPause');
+  var btnPrev     = document.getElementById('btnPrev');
+  var btnNext     = document.getElementById('btnNext');
+  var btnReplay   = document.getElementById('btnReplay');
+  var btnSound    = document.getElementById('btnSound');
+  var btnSoundLabel = document.getElementById('btnSoundLabel');
+  var btnVoice    = document.getElementById('btnVoice');
+  var btnVoiceLabel = document.getElementById('btnVoiceLabel');
+  var btnFull     = document.getElementById('btnFull');
+  var btnAgain    = document.getElementById('btnAgain');
+
+  /* ======================================================================
+     4. 状态机
+     ====================================================================== */
+
+  var state = {
+    index: 0,          // 全局阶段索引 0..29
+    running: false,    // 是否在走时
+    finished: false,   // 是否已完成
+    phaseStartTs: 0,   // 当前阶段的绝对起始毫秒（暂停时间已被扣除）
+    pausedAtTs: 0,     // 暂停时刻
+    lastSec: -1,       // 上次渲染的整数秒（避免重复写 DOM）
+    lastBeepSec: -1,   // 上次 3-2-1 提示音所在秒
+    lastTickTs: 0,     // 上次 tick 的时刻（看门狗用）
+    rafId: 0,
+    soundOn: true,
+    voiceOn: true,
+    wakeLock: null
+  };
+
+  var CIRC = 2 * Math.PI * 86;   // 环周长（r=86）
+  var PB_LAST = '';              // 进度条缓存
+
+  /* rAF 兼容封装 */
+  var rafFn = window.requestAnimationFrame
+    ? function (cb) { return window.requestAnimationFrame(cb); }
+    : function (cb) { return window.setTimeout(cb, 60); };
+  var cafFn = window.cancelAnimationFrame
+    ? function (id) { window.cancelAnimationFrame(id); }
+    : function (id) { window.clearTimeout(id); };
+
+  /* ======================================================================
+     5. 时间锚点核心：tick（唯一的推进逻辑）
+     ====================================================================== */
+
+  /**
+   * 每帧执行：用时间锚点算 elapsed，绝不递减计数。
+   * 剩余 = 阶段时长 - (Date.now() - phaseStartTs)/1000
+   */
+  function tick() {
+    if (!state.running) { return; }
+    state.lastTickTs = Date.now();
+
+    var now = Date.now();
+    var elapsed = (now - state.phaseStartTs) / 1000;
+    var dur = PHASES[state.index].duration;
+    var transitions = 0;
+
+    /* 相变（含后台回来后的连续追赶）：一次算清，不在中途播放音效 */
+    while (elapsed >= dur) {
+      if (state.index >= PHASES.length - 1) {
+        finish();
+        return;
+      }
+      elapsed = elapsed - dur;
+      state.index = state.index + 1;
+      state.phaseStartTs = now - elapsed * 1000;
+      dur = PHASES[state.index].duration;
+      transitions = transitions + 1;
+    }
+
+    if (transitions > 0) {
+      /* 只在正常播放的相变时出声，后台长时间回来不连播 */
+      enterPhase(transitions === 1);
+    }
+
+    renderDynamic(dur - elapsed);
+    schedule();
+  }
+
+  function schedule() {
+    if (state.rafId) { return; }
+    state.rafId = rafFn(frame);
+  }
+
+  function frame() {
+    state.rafId = 0;
+    if (!state.running) { return; }
+    tick();
+  }
+
+  function cancelRaf() {
+    if (state.rafId) {
+      cafFn(state.rafId);
+      state.rafId = 0;
+    }
+  }
+
+  /* ======================================================================
+     6. 渲染
+     ====================================================================== */
+
+  /** 进入某个阶段时刷新静态文案（立即执行，不等下一帧） */
+  function enterPhase(withSound) {
+    state.lastSec = -1;
+    state.lastBeepSec = -1;
+    renderStatic();
+    if (withSound) {
+      playChime(PHASES[state.index].type);
+      speakPhase();
+    }
+  }
+
+  /** 静态部分：状态条 / 动作名 / 要点 / 呼吸 / 下一个 */
+  function renderStatic() {
+    var phase = PHASES[state.index];
+    var isRest = (phase.type === 'rest');
+
+    appEl.setAttribute('data-phase', isRest ? 'rest' : 'exercise');
+    phaseTag.textContent = isRest ? '休息' : '动作中';
+
+    if (isRest) {
+      statusText.textContent = '第 ' + phase.group + ' 组 · 休息' + (phase.endsGroup ? '（本组完成）' : '');
+      actionName.textContent = '休息';
+      tipsLabel.style.display = 'none';          /* 休息时的提示语不需要"要点"标签 */
+      tipsBody.textContent = '喝口水，别坐下';
+      breatheBody.textContent = '鼻吸口呼，让心率慢慢降下来';
+    } else {
+      var ex = phase.exercise;
+      statusText.textContent = '第 ' + ex.group + ' 组 · 动作 ' + ex.indexInGroup + ' / 12';
+      actionName.textContent = ex.name;
+      tipsLabel.style.display = '';
+      tipsBody.textContent = ex.tips;
+      breatheBody.textContent = ex.breathe;
+    }
+    nextLineEl.innerHTML = nextLineText();
+  }
+
+  /** 右下角/底部的"下一个"文案 */
+  function nextLineText() {
+    var phase = PHASES[state.index];
+    var next = (state.index + 1 < PHASES.length) ? PHASES[state.index + 1] : null;
+
+    if (phase.type === 'exercise') {
+      if (!next) { return '接下来：<b>30 分钟完成</b>'; }
+      if (next.type === 'rest') { return '下一个：<b>休息 1 分钟</b>'; }
+      return '下一个：<b>' + next.exercise.name + '</b>';
+    }
+    if (!next) { return '接下来：<b>30 分钟完成</b>'; }
+    return '接下来：<b>' + next.exercise.name + '</b>';
+  }
+
+  /** 动态部分：倒计时 / 环 / 总剩余 / 底部进度条 / 最后 3 秒提示音 */
+  function renderDynamic(remaining) {
+    var phase = PHASES[state.index];
+    var dur = phase.duration;
+    var rem = clamp(remaining, 0, dur);
+    var secLeft = Math.ceil(rem - 0.000001);
+
+    /* ---- 数字（每秒最多写一次） ---- */
+    if (secLeft !== state.lastSec) {
+      state.lastSec = secLeft;
+      countdownEl.textContent = fmtTime(rem);
+
+      var elapsedTotal = CUM_START[state.index] + (dur - rem);
+      elapsedTotal = clamp(elapsedTotal, 0, TOTAL_SECONDS);
+      totalLeft.textContent = '总剩余 ' + fmtTime(TOTAL_SECONDS - elapsedTotal);
+
+      /* ---- 底部整体进度 ---- */
+      var pct = (elapsedTotal / TOTAL_SECONDS) * 100;
+      var pctStr = pct.toFixed(3) + '%';
+      if (pctStr !== PB_LAST) {
+        PB_LAST = pctStr;
+        var clip = 'inset(0 ' + (100 - pct).toFixed(3) + '% 0 0)';
+        pbFillEl.style.webkitClipPath = clip;
+        pbFillEl.style.clipPath = clip;
+      }
+    }
+
+    /* ---- 环形进度（每帧更新，剩余比例） ---- */
+    var ratio = dur > 0 ? (rem / dur) : 0;
+    var offset = CIRC * (1 - ratio);
+    var offStr = offset.toFixed(2);
+    ringFillEl.style.strokeDasharray = String(CIRC.toFixed(2));
+    ringFillEl.style.strokeDashoffset = offStr;
+    ringGlowEl.style.strokeDasharray = String(CIRC.toFixed(2));
+    ringGlowEl.style.strokeDashoffset = offStr;
+
+    /* ---- 相变前 3 秒：每秒一短促提示音 ---- */
+    if (state.running && secLeft <= 3 && secLeft >= 1 && state.lastBeepSec !== secLeft) {
+      state.lastBeepSec = secLeft;
+      playBeep(880, 0.09, 0.13);
+    }
+  }
+
+  /* 注意：SVGElement 的 className 是只读的（SVGAnimatedString），必须用 setAttribute */
+  function updatePlayButton() {
+    if (state.finished) {
+      btnPlayLabel.textContent = '开始';
+      icoPlay.setAttribute('class', 'ico');
+      icoPause.setAttribute('class', 'ico hide');
+      return;
+    }
+    if (state.running) {
+      btnPlayLabel.textContent = '暂停';
+      icoPlay.setAttribute('class', 'ico hide');
+      icoPause.setAttribute('class', 'ico');
+    } else {
+      btnPlayLabel.textContent = (state.phaseStartTs === 0) ? '开始' : '继续';
+      icoPlay.setAttribute('class', 'ico');
+      icoPause.setAttribute('class', 'ico hide');
+    }
+  }
+
+  /** 构建底部 30 段进度色块（休息段用冷色标出） */
+  function buildProgressBar() {
+    var fragTrack = document.createDocumentFragment();
+    var fragFill = document.createDocumentFragment();
+    for (var i = 0; i < PHASES.length; i++) {
+      var isRest = (PHASES[i].type === 'rest');
+      var a = document.createElement('div');
+      a.className = isRest ? 'pb-seg pb-seg-rest' : 'pb-seg';
+      fragTrack.appendChild(a);
+      var b = document.createElement('div');
+      b.className = isRest ? 'pb-seg pb-seg-rest' : 'pb-seg';
+      fragFill.appendChild(b);
+    }
+    pbTrack.appendChild(fragTrack);
+    pbFillEl.appendChild(fragFill);
+  }
+
+  /* ======================================================================
+     7. 播放控制
+     ====================================================================== */
+
+  function togglePlay() {
+    if (state.finished) { restart(); return; }
+    if (state.running) { pause(); } else { resume(); }
+  }
+
+  function pause() {
+    if (!state.running) { return; }
+    state.running = false;
+    state.pausedAtTs = Date.now();
+    cancelRaf();
+    releaseWakeLock();
+    updatePlayButton();
+  }
+
+  /**
+   * 恢复/开始播放。
+   * 时间锚点补偿：phaseStartTs += (Date.now() - pausedAtTs)，剩余时间不跳变。
+   */
+  function resume() {
+    ensureAudio();
+
+    var fresh = (state.phaseStartTs === 0);
+    if (fresh) {
+      state.phaseStartTs = Date.now();
+    } else {
+      var pausedFor = Date.now() - (state.pausedAtTs || Date.now());
+      state.phaseStartTs = state.phaseStartTs + pausedFor;
+    }
+    state.pausedAtTs = 0;
+    state.running = true;
+    state.lastSec = -1;
+    state.lastBeepSec = -1;
+    updatePlayButton();
+    requestWakeLock();
+
+    if (fresh) {
+      playChime(PHASES[state.index].type);
+      speakPhase();
+    }
+    tick();   // 立刻算一次，不等下一帧
+  }
+
+  /**
+   * 跳到指定阶段（上一个 / 下一个）。phaseStartTs 重置为当前时刻，从整 60 秒开始读。
+   * @param {number} target 目标索引
+   */
+  function goTo(target) {
+    var idx = clamp(target, 0, PHASES.length - 1);
+    if (state.finished) {
+      finishEl.className = 'finish';
+      state.finished = false;
+    }
+    state.index = idx;
+    state.phaseStartTs = Date.now();
+    state.pausedAtTs = state.running ? 0 : Date.now();
+    state.lastSec = -1;
+    state.lastBeepSec = -1;
+    renderStatic();
+    updatePlayButton();
+    renderDynamic(PHASES[state.index].duration);
+    if (state.running) { schedule(); }
+  }
+
+  function goPrev() { goTo(state.index - 1); }
+  function goNext() { goTo(state.index + 1); }
+
+  function restart() {
+    if (typeof window.speechSynthesis !== 'undefined' && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (e) { /* 忽略 */ }
+    }
+    finishEl.className = 'finish';
+    state.finished = false;
+    state.running = false;
+    state.index = 0;
+    state.phaseStartTs = 0;
+    state.pausedAtTs = 0;
+    state.lastSec = -1;
+    state.lastBeepSec = -1;
+    cancelRaf();
+    renderStatic();
+    resume();   // 重播即开始
+  }
+
+  /** 30 分钟走完 */
+  function finish() {
+    cancelRaf();
+    state.running = false;
+    state.finished = true;
+    state.index = PHASES.length - 1;
+    state.lastSec = -1;
+    releaseWakeLock();
+    updatePlayButton();
+    countdownEl.textContent = '00:00';
+    var clip = 'inset(0 0% 0 0)';
+    pbFillEl.style.webkitClipPath = clip;
+    pbFillEl.style.clipPath = clip;
+    totalLeft.textContent = '总剩余 00:00';
+    ringFillEl.style.strokeDashoffset = String(CIRC.toFixed(2));
+    ringGlowEl.style.strokeDashoffset = String(CIRC.toFixed(2));
+    finishEl.className = 'finish show';
+    if (state.soundOn) {
+      playBeep(523.25, 0.45, 0.16);
+      window.setTimeout(function () { playBeep(783.99, 0.75, 0.15); }, 200);
+    }
+    if (state.voiceOn) {
+      window.setTimeout(function () { speak('训练完成，今天就这样。'); }, 900);
+    }
+  }
+
+  /* ======================================================================
+     8. 音频：全部用 Web Audio API 合成，不引任何音频文件
+     ====================================================================== */
+
+  var AudioCtor = window.AudioContext || window.webkitAudioContext;
+  var actx = null;
+
+  /** 必须在用户手势里调用（iOS / Safari 的自动播放限制） */
+  function ensureAudio() {
+    if (!AudioCtor) { return; }
+    try {
+      if (!actx) {
+        actx = new AudioCtor();
+      }
+      if (actx.state === 'suspended' && actx.resume) {
+        actx.resume();
+      }
+    } catch (e) {
+      actx = null;
+    }
+  }
+
+  /**
+   * 合成一个音。
+   * @param {number} freq 频率 Hz
+   * @param {number} dur 时长（秒）
+   * @param {number} vol 峰值音量 0-1
+   * @param {number} delay 延迟（秒）
+   */
+  function playBeep(freq, dur, vol, delay) {
+    if (!actx || !state.soundOn) { return; }
+    try {
+      var t0 = actx.currentTime + (delay || 0);
+      var osc = actx.createOscillator();
+      var gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.03);
+    } catch (e) { /* 静默失败，不影响计时 */ }
+  }
+
+  /** 相变音：动作开始偏高有力，休息开始偏低柔和 */
+  function playChime(type) {
+    if (!state.soundOn) { return; }
+    if (type === 'rest') {
+      playBeep(392.00, 0.55, 0.17, 0);      // G4
+      playBeep(523.25, 0.60, 0.11, 0.14);   // C5
+    } else {
+      playBeep(659.25, 0.36, 0.20, 0);      // E5
+      playBeep(987.77, 0.50, 0.14, 0.11);   // B5
+    }
+  }
+
+  /** 语音播报（可关，且不存在就静默跳过） */
+  function speak(text) {
+    if (!state.voiceOn) { return; }
+    if (typeof window.speechSynthesis === 'undefined' || !window.speechSynthesis) { return; }
+    if (typeof window.SpeechSynthesisUtterance !== 'function') { return; }
+    try {
+      window.speechSynthesis.cancel();
+      var u = new window.SpeechSynthesisUtterance(text);
+      u.lang = 'zh-CN';
+      u.rate = 1;
+      u.pitch = 1;
+      u.volume = 1;
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* 忽略 */ }
+  }
+
+  function speakPhase() {
+    var phase = PHASES[state.index];
+    if (phase.type === 'rest') {
+      speak(phase.endsGroup ? '本组完成，休息一分钟' : '休息一分钟');
+    } else {
+      speak(phase.exercise.name);
+    }
+  }
+
+  /* ======================================================================
+     9. 偏好在 localStorage（file:// 下可能抛异常，全部包 try/catch）
+     ====================================================================== */
+
+  var STORE_KEY = 'beiyun30.v1';
+
+  function loadPrefs() {
+    try {
+      var raw = window.localStorage.getItem(STORE_KEY);
+      if (!raw) { return; }
+      var obj = JSON.parse(raw);
+      if (obj && typeof obj.soundOn === 'boolean') { state.soundOn = obj.soundOn; }
+      if (obj && typeof obj.voiceOn === 'boolean') { state.voiceOn = obj.voiceOn; }
+    } catch (e) { /* 忽略 */ }
+  }
+
+  function savePrefs() {
+    try {
+      window.localStorage.setItem(STORE_KEY, JSON.stringify({
+        soundOn: state.soundOn,
+        voiceOn: state.voiceOn
+      }));
+    } catch (e) { /* 忽略 */ }
+  }
+
+  function syncSoundButton() {
+    btnSoundLabel.textContent = state.soundOn ? '声音 开' : '声音 关';
+    if (state.soundOn) {
+      btnSound.className = 'btn';
+    } else {
+      btnSound.className = 'btn off';
+    }
+  }
+
+  function syncVoiceButton() {
+    btnVoiceLabel.textContent = state.voiceOn ? '语音 开' : '语音 关';
+    if (state.voiceOn) {
+      btnVoice.className = 'btn';
+    } else {
+      btnVoice.className = 'btn off';
+    }
+  }
+
+  function toggleSound() {
+    state.soundOn = !state.soundOn;
+    if (state.soundOn) {
+      ensureAudio();
+      playBeep(880, 0.1, 0.13);
+    } else if (typeof window.speechSynthesis !== 'undefined' && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (e) { /* 忽略 */ }
+    }
+    syncSoundButton();
+    savePrefs();
+  }
+
+  function toggleVoice() {
+    state.voiceOn = !state.voiceOn;
+    if (state.voiceOn) {
+      speak('语音已开启');
+    } else if (typeof window.speechSynthesis !== 'undefined' && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (e) { /* 忽略 */ }
+    }
+    syncVoiceButton();
+    savePrefs();
+  }
+
+  /* ======================================================================
+     10. 设备适配：防息屏 / 全屏
+     ====================================================================== */
+
+  function requestWakeLock() {
+    try {
+      if (!navigator.wakeLock || typeof navigator.wakeLock.request !== 'function') { return; }
+      navigator.wakeLock.request('screen').then(function (lock) {
+        state.wakeLock = lock;
+        if (lock.addEventListener) {
+          lock.addEventListener('release', function () { state.wakeLock = null; });
+        }
+      })['catch'](function () { /* 静默降级 */ });
+    } catch (e) { /* 静默降级 */ }
+  }
+
+  function releaseWakeLock() {
+    try {
+      if (state.wakeLock && typeof state.wakeLock.release === 'function') {
+        state.wakeLock.release();
+      }
+    } catch (e) { /* 忽略 */ }
+    state.wakeLock = null;
+  }
+
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+              document.mozFullScreenElement || document.msFullscreenElement);
+  }
+
+  function setPseudoFullscreen(on) {
+    if (on) {
+      document.body.className = 'pseudo-fullscreen';
+    } else {
+      document.body.className = '';
+    }
+  }
+
+  /** 全屏：标准 → webkit → 伪全屏；任何一步失败都静默降级 */
+  function toggleFullscreen() {
+    try {
+      if (isFullscreen()) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen()['catch'](function () { /* 忽略 */ });
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        setPseudoFullscreen(false);
+        return;
+      }
+      var el = document.documentElement;
+      var p = null;
+      if (el.requestFullscreen) {
+        p = el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        p = el.webkitRequestFullscreen();
+      } else if (el.msRequestFullscreen) {
+        p = el.msRequestFullscreen();
+      }
+      if (p && typeof p.then === 'function') {
+        p.then(function () { setPseudoFullscreen(false); })['catch'](function () { setPseudoFullscreen(true); });
+      } else if (!p) {
+        setPseudoFullscreen(document.body.className !== 'pseudo-fullscreen');
+      }
+    } catch (e) {
+      setPseudoFullscreen(document.body.className !== 'pseudo-fullscreen');
+    }
+  }
+
+  /* ======================================================================
+     11. 事件绑定
+     ====================================================================== */
+
+  function bindEvents() {
+    btnPlay.addEventListener('click', function () { togglePlay(); });
+    btnPrev.addEventListener('click', function () { goPrev(); });
+    btnNext.addEventListener('click', function () { goNext(); });
+    btnReplay.addEventListener('click', function () { restart(); });
+    btnSound.addEventListener('click', function () { toggleSound(); });
+    btnVoice.addEventListener('click', function () { toggleVoice(); });
+    btnFull.addEventListener('click', function () { toggleFullscreen(); });
+    btnAgain.addEventListener('click', function () { restart(); });
+
+    /* 键盘 / 电视遥控器（方向键 + OK） */
+    document.addEventListener('keydown', function (e) {
+      var key = e.key || '';
+      var code = e.keyCode || 0;
+
+      if (key === ' ' || key === 'Spacebar' || code === 32 ||
+          key === 'Enter' || code === 13) {
+        e.preventDefault();
+        togglePlay();
+        return;
+      }
+      if (key === 'ArrowLeft' || code === 37) {
+        e.preventDefault();
+        goPrev();
+        return;
+      }
+      if (key === 'ArrowRight' || code === 39) {
+        e.preventDefault();
+        goNext();
+        return;
+      }
+      if (key === 'r' || key === 'R' || code === 82) {
+        e.preventDefault();
+        restart();
+        return;
+      }
+      if (key === 'f' || key === 'F' || code === 70) {
+        e.preventDefault();
+        toggleFullscreen();
+        return;
+      }
+      if (key === 'm' || key === 'M' || code === 77) {
+        e.preventDefault();
+        toggleSound();
+      }
+    }, false);
+
+    /* 后台 / 熄屏回来：强制立即重算一次，并重新拿防息屏锁 */
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { return; }
+      if (state.running) {
+        tick();
+        requestWakeLock();
+      }
+    }, false);
+
+    /* 全屏状态变化时同步伪全屏样式 */
+    document.addEventListener('fullscreenchange', function () {
+      if (!isFullscreen()) { setPseudoFullscreen(false); }
+    }, false);
+    document.addEventListener('webkitfullscreenchange', function () {
+      if (!isFullscreen()) { setPseudoFullscreen(false); }
+    }, false);
+
+    /* 彻底禁用触摸滚动（有滚动就会破坏 10-foot 版面） */
+    try {
+      document.addEventListener('touchmove', function (e) {
+        if (e.cancelable) { e.preventDefault(); }
+      }, { passive: false });
+    } catch (err) {
+      document.addEventListener('touchmove', function (e) {
+        if (e.cancelable) { e.preventDefault(); }
+      }, false);
+    }
+    /* 双击缩放（iOS 上可能拖出视口） */
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, false);
+  }
+
+  /* ======================================================================
+     12. 初始化
+     ====================================================================== */
+
+  /**
+   * 看门狗：部分电视浏览器 / 后台标签页会节流甚至停掉 requestAnimationFrame。
+   * 这里用低频心跳兜底——它不参与计时（计时只认时间锚点），只是发现"距上次 tick
+   * 超过 350ms"就强制重算一次，保证画面不会僵在某个数字上。
+   */
+  function startWatchdog() {
+    window.setInterval(function () {
+      if (!state.running) { return; }
+      if (Date.now() - state.lastTickTs > 350) { tick(); }
+    }, 400);
+  }
+
+  function init() {
+    loadPrefs();
+    syncSoundButton();
+    syncVoiceButton();
+    buildProgressBar();
+    bindEvents();
+    startWatchdog();
+    ringFillEl.style.strokeDasharray = String(CIRC.toFixed(2));
+    ringGlowEl.style.strokeDasharray = String(CIRC.toFixed(2));
+    state.index = 0;
+    state.phaseStartTs = 0;
+    renderStatic();
+    updatePlayButton();
+    renderDynamic(PHASES[0].duration);
+    if (window.console && window.console.log) {
+      window.console.log('[备孕30分钟] v1 就绪：' + PHASES.length + ' 阶段 / ' +
+        TOTAL_SECONDS + ' 秒');
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
