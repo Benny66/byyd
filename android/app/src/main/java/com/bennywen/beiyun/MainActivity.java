@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -38,6 +39,7 @@ public class MainActivity extends Activity {
     private static final String ACTION_SETTINGS = "com.bennywen.beiyun.SETTINGS";
     private static final int REQ_NOTIFICATIONS = 1001;
     private static final long POLL_MS = 60_000L;
+    private static final long PHASE_POLL_MS = 1_000L;
 
     /** 读取 localStorage 里最近一次训练的归属日，口径与网页端一致（Asia/Shanghai）。 */
     private static final String JS_LAST_DAY =
@@ -45,6 +47,15 @@ public class MainActivity extends Activity {
                     + "var o=JSON.parse(raw);var d=(o&&o.data)||[];var last='';"
                     + "for(var i=0;i<d.length;i++){var k=d[i]&&d[i].day;if(k&&k>last)last=k;}"
                     + "return last;}catch(e){return '';}})()";
+
+    /**
+     * 判断训练是否进行中：倒计时数字在变说明在跑；完成屏出现说明结束了。
+     * 暂停时数字不变，但我们保持横屏，避免练到一半被转回竖屏。
+     */
+    private static final String JS_TRAINING_STATE =
+            "(function(){try{var cd=document.querySelector('.countdown');"
+                    + "var fin=document.querySelector('.finish.show');"
+                    + "return (cd?cd.textContent.trim():'')+'|'+(fin?'1':'0');}catch(e){return '|0';}})()";
 
     private WebView web;
     private ProgressBar progress;
@@ -61,6 +72,20 @@ public class MainActivity extends Activity {
         public void run() {
             readLastTrainingDay();
             handler.postDelayed(this, POLL_MS);
+        }
+    };
+
+    /** 训练中强制横屏用的状态。 */
+    private boolean trainingActive;
+    private boolean landscapeNow;
+    /** null 表示还没采到第一次样本，第一帧不能算「数字变化」。 */
+    private String lastCountdown;
+
+    private final Runnable phasePoll = new Runnable() {
+        @Override
+        public void run() {
+            syncOrientation();
+            handler.postDelayed(this, PHASE_POLL_MS);
         }
     };
 
@@ -170,11 +195,13 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         handler.post(poll);
+        handler.post(phasePoll);
     }
 
     @Override
     protected void onPause() {
         handler.removeCallbacks(poll);
+        handler.removeCallbacks(phasePoll);
         super.onPause();
     }
 
@@ -195,11 +222,52 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
         exitCustomView();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         if (web != null) {
             web.destroy();
             web = null;
         }
         super.onDestroy();
+    }
+
+    /* ------------------------------------------------------------ 自动横屏 */
+
+    private void syncOrientation() {
+        if (web == null) {
+            return;
+        }
+        web.evaluateJavascript(JS_TRAINING_STATE, value -> {
+            String payload = unquote(value);
+            int separator = payload.lastIndexOf('|');
+            if (separator < 0) {
+                return;
+            }
+            String countdown = payload.substring(0, separator);
+            boolean finished = "1".equals(payload.substring(separator + 1));
+
+            if (finished) {
+                trainingActive = false;
+            } else if (lastCountdown == null) {
+                // 第一帧只记基线：首屏静止在「00:05」时不能误判成正在训练
+                lastCountdown = countdown;
+            } else if (!countdown.isEmpty() && !countdown.equals(lastCountdown)) {
+                trainingActive = true;
+            }
+            lastCountdown = countdown;
+
+            applyOrientation(trainingActive && prefs.autoLandscape());
+        });
+    }
+
+    private void applyOrientation(boolean landscape) {
+        if (landscape == landscapeNow) {
+            return;
+        }
+        landscapeNow = landscape;
+        // SENSOR_LANDSCAPE 左右两个方向都跟，手机横放哪边都行
+        setRequestedOrientation(landscape
+                ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                : ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     private void exitCustomView() {
@@ -276,6 +344,11 @@ public class MainActivity extends Activity {
         enabled.setChecked(prefs.enabled());
         box.addView(enabled);
 
+        CheckBox landscape = new CheckBox(this);
+        landscape.setText(R.string.settings_landscape);
+        landscape.setChecked(prefs.autoLandscape());
+        box.addView(landscape);
+
         TextView note = new TextView(this);
         note.setPadding(0, pad, 0, 0);
         note.setText(getString(R.string.settings_note, BuildConfig.DEFAULT_SITE_URL));
@@ -288,8 +361,11 @@ public class MainActivity extends Activity {
                 .setCancelable(!firstRun)
                 .setPositiveButton(R.string.action_save, (d, w) -> {
                     prefs.save(time[0], time[1], enabled.isChecked());
+                    prefs.setAutoLandscape(landscape.isChecked());
                     prefs.setReminderSetup();
                     ReminderScheduler.schedule(this);
+                    // 改了开关立刻生效，不用等下一次训练
+                    applyOrientation(trainingActive && prefs.autoLandscape());
                     ensureNotificationPermission();
                     guideExactAlarm();
                 })

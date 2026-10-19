@@ -9,6 +9,7 @@
     <string name="settings_title">提醒设置</string>
     <string name="settings_time">提醒时间：%1$02d:%2$02d（点击修改）</string>
     <string name="settings_enabled">每天提醒（今天练过就不提醒）</string>
+    <string name="settings_landscape">训练时自动横屏（手机横放更清楚）</string>
     <string name="settings_note">站点地址已内置：%1$s\n换域名需要改构建配置重新编译</string>
     <string name="action_save">保存</string>
     <string name="action_cancel">取消</string>

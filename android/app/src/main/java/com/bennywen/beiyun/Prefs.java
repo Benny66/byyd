@@ -67,6 +67,15 @@ final class Prefs {
                 .apply();
     }
 
+    /** 训练进行中是否强制横屏。 */
+    boolean autoLandscape() {
+        return sp.getBoolean("auto_landscape", true);
+    }
+
+    void setAutoLandscape(boolean value) {
+        sp.edit().putBoolean("auto_landscape", value).apply();
+    }
+
     static String todayKey() {
         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         f.setTimeZone(TimeZone.getTimeZone(TZ));
