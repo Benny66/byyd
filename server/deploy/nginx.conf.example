@@ -1,6 +1,8 @@
 # 仅作参考：Caddy 更省事，优先用 Caddyfile
-# 关键点：只反代到 127.0.0.1，不要直接把 8787 暴露到公网；
-# 服务端限流信任 X-Forwarded-For，直连时客户端可伪造。
+# 宝塔面板请用同目录的 nginx.bt.conf.example
+# 关键点：只反代到 127.0.0.1，不要直接把 8787 暴露到公网。
+# 转发头用 $remote_addr 覆盖而非 $proxy_add_x_forwarded_for：后者保留客户端
+# 自带的 X-Forwarded-For 再追加，伪造的 IP 会留在最左边。
 
 server {
     listen 443 ssl http2;
@@ -14,9 +16,11 @@ server {
         proxy_pass http://127.0.0.1:8787;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_read_timeout 30s;
+        gzip_proxied any;
     }
 
     add_header X-Content-Type-Options nosniff;

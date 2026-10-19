@@ -135,15 +135,34 @@ func (l *rateLimiter) allow(key string) bool {
 }
 
 func clientIP(r *http.Request) string {
-	if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
-		parts := strings.Split(forwarded, ",")
-		return strings.TrimSpace(parts[0])
-	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
-		return r.RemoteAddr
+		host = r.RemoteAddr
+	}
+	// 只有直连方是本机反代时才采信转发头。否则客户端自带一个
+	// X-Forwarded-For 就能把来源 IP 改成任意值，限流直接失效。
+	if !isLoopback(host) {
+		return host
+	}
+	// 取最右一跳：$proxy_add_x_forwarded_for 会把客户端自带的头留在左边，
+	// 最右边才是 nginx 自己追加的真实地址。
+	if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
+		parts := strings.Split(forwarded, ",")
+		if last := strings.TrimSpace(parts[len(parts)-1]); last != "" {
+			return last
+		}
 	}
 	return host
+}
+
+func isLoopback(host string) bool {
+	if host == "localhost" || host == "::1" {
+		return true
+	}
+	if ip := net.ParseIP(host); ip != nil {
+		return ip.IsLoopback()
+	}
+	return false
 }
 
 /* ------------------------------------------------------------------ 设备 */

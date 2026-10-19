@@ -1,0 +1,52 @@
+# 宝塔面板站点配置示例（网站 → 设置 → 配置文件里手动粘贴）
+#
+# 前提：Go 项目监听 127.0.0.1:8787（BEIYUN_ADDR），且 8787 不对公网开放。
+# 只反代、不要配 root/try_files：静态资源和 SPA 回退都由 Go 自己处理，
+# 缓存头（/_nuxt/ immutable、HTML no-cache）也是 Go 设的，nginx 别覆盖。
+#
+# 面板会自动维护 #SSL-START/#SSL-END 与伪静态 include，手改时不要动这两段。
+
+server {
+    listen 80;
+    listen 443 ssl http2;
+    server_name example.com;
+
+    #SSL-START 由宝塔管理，开启 SSL 后自动写入证书配置，勿手改
+    #SSL-END
+
+    #REWRITE-START
+    include /www/server/panel/vhost/rewrite/example.com.conf;
+    #REWRITE-END
+
+    # 上报体只有几百字节，收窄到 64k 挡住误传的大文件
+    client_max_body_size 64k;
+
+    location / {
+        proxy_pass http://127.0.0.1:8787;
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        # 用 $remote_addr 覆盖，不要用 $proxy_add_x_forwarded_for。
+        # 后者保留客户端自带的 X-Forwarded-For 再追加，伪造的 IP 会留在最左边。
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+
+        # 反代响应要允许压缩，宝塔默认 gzip on，这里补上 proxied
+        gzip_proxied any;
+    }
+
+    # 健康检查不写访问日志，避免监控把日志刷满
+    location = /healthz {
+        access_log off;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+    }
+
+    access_log /www/wwwlogs/example.com.log;
+    error_log /www/wwwlogs/example.com.error.log;
+}

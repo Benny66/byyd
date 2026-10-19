@@ -260,15 +260,53 @@ BEIYUN_DB_PATH=/www/wwwroot/byyd/data/app.db
 
 几个容易踩的点：
 
-- **端口冲突**：面板的「项目端口」和 `BEIYUN_ADDR` 里的端口要一致；只想让 Nginx 反代时把 `BEIYUN_ADDR` 绑 `127.0.0.1`，否则 8787 会直接暴露到公网，而客户端的 `X-Forwarded-For` 是可伪造的，限流会失效。
+- **端口冲突**：面板的「项目端口」和 `BEIYUN_ADDR` 里的端口要一致；只想让 Nginx 反代时把 `BEIYUN_ADDR` 绑 `127.0.0.1`，别让 8787 直连公网。
 - **目录权限**：面板默认用 `www` 用户跑项目，`data` 目录属主必须是它，否则 SQLite 打不开会直接退出：`chown -R www:www /www/wwwroot/byyd/data`。
-- **域名与 HTTPS**：在项目里绑域名，或在「网站」里加反向代理指向 `http://127.0.0.1:8787`，两处都开 SSL 即可。
 - **更新**：面板停项目 → 覆盖二进制（同名直接 `scp`）→ 启项目。数据库迁移只做加法，旧二进制也能读新库，回滚就是换回上一个文件。
 - **备份**：把 `server/deploy/backup.sh` 传上去，用面板「计划任务 → Shell 脚本」加每日任务：
   ```bash
   BEIYUN_BACKUP_KEEP_DAYS=14 /www/wwwroot/byyd/backup.sh /www/wwwroot/byyd/data/app.db /www/backup/byyd
   ```
 - `data/` 已在 `.gitignore` 里，别把线上库提交回仓库。
+
+#### Nginx 配置
+
+站点配置有两种写法，推荐第二种。
+
+**用面板的「反向代理」**：网站 → 设置 → 反向代理 → 添加，目标 URL 填 `http://127.0.0.1:8787`、发送域名 `$host`。够用，但面板生成的文件里转发头写的是 `$proxy_add_x_forwarded_for`，见下面第 2 点，需要手工改一行。
+
+**手写配置**（完整示例见 `server/deploy/nginx.bt.conf.example`）：网站 → 设置 → 配置文件，把 `location /` 贴进现有 `server` 块。注意别整体覆盖面板生成的文件——`#SSL-START/#SSL-END` 和伪静态 `include` 两段是面板在维护的。
+
+```nginx
+client_max_body_size 64k;
+
+location / {
+    proxy_pass http://127.0.0.1:8787;
+    proxy_http_version 1.1;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $remote_addr;   # 覆盖，不要用 $proxy_add_x_forwarded_for
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    proxy_connect_timeout 5s;
+    proxy_send_timeout 30s;
+    proxy_read_timeout 30s;
+
+    gzip_proxied any;
+}
+
+location = /healthz {
+    access_log off;
+    proxy_pass http://127.0.0.1:8787;
+}
+```
+
+三个要点：
+
+1. **不要配 `root` / `try_files`**。前端产物已经编进二进制，静态资源和 SPA 回退（未知路径返回训练页）都由 Go 处理，`/_nuxt/` 的 immutable 缓存头也是 Go 设的，nginx 再写 `expires` 只会打架。
+2. **转发头必须用 `$remote_addr` 覆盖**。`$proxy_add_x_forwarded_for` 会保留客户端自带的 `X-Forwarded-For` 再往后追加，服务端取的是最右一跳的真实地址，但只要有人直连 8787 就能自带任意值——用 `$remote_addr` 覆盖等于把伪造的可能掐掉。
+3. **`/healthz` 关掉访问日志**，监控每分钟探活会把日志刷满。
 
 ### 回滚
 
