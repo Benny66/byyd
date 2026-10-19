@@ -194,6 +194,16 @@ npm run build:server
 
 产物是 `bin/beiyun-server`（约 10 MB）：内嵌前端资源 + API + SQLite 驱动。运行时只需要三样东西——可执行文件、可写的数据库目录、监听地址。
 
+**部署到 Linux 必须交叉编译**，否则拿到的是 macOS 的 Mach-O，在服务器上会直接报 `cannot execute binary file`：
+
+```bash
+npm run build:linux          # 同时产出 amd64 与 arm64
+npm run build:linux:amd64    # 只出 x86-64（多数云服务器）
+npm run build:linux:arm64    # 只出 ARM64（部分轻量云 / 鲲鹏）
+```
+
+服务器上看架构用 `uname -m`：`x86_64` → amd64，`aarch64` → arm64。SQLite 驱动是纯 Go 实现，所以交叉编译不需要 CGO，产物是静态链接的，放到 CentOS 7 这类老系统上也不缺 glibc。
+
 ```bash
 BEIYUN_ADDR=127.0.0.1:8787 BEIYUN_DB_PATH=/var/lib/beiyun/app.db ./bin/beiyun-server
 ```
@@ -226,6 +236,39 @@ sudo caddy reload --config /etc/caddy/Caddyfile
 ```
 
 部署前检查：`curl https://your.domain/healthz` 返回 `{"status":"ok","db":"ok"}`；访问未知路径应返回训练页而不是服务器默认 404。
+
+### 宝塔面板（Go 项目）
+
+宝塔的「网站 → Go 项目」直接跑二进制，不用装 Go 环境，也不能把 macOS 上编好的文件传上去。
+
+```bash
+# 1. 本地按服务器架构交叉编译
+uname -m                                    # 服务器上确认：x86_64 还是 aarch64
+npm run build:linux:amd64                   # x86_64 用这个；ARM 机器用 build:linux:arm64
+
+# 2. 上传并赋可执行权限（漏掉 chmod 会报 Permission denied）
+scp bin/beiyun-server-linux-amd64 root@host:/www/wwwroot/byyd/beiyun-server
+ssh root@host 'cd /www/wwwroot/byyd && chmod +x beiyun-server && mkdir -p data'
+```
+
+面板里新建 Go 项目：项目目录 `/www/wwwroot/byyd`、启动文件 `beiyun-server`、项目端口 `8787`，然后在「环境变量」里填：
+
+```
+BEIYUN_ADDR=127.0.0.1:8787
+BEIYUN_DB_PATH=/www/wwwroot/byyd/data/app.db
+```
+
+几个容易踩的点：
+
+- **端口冲突**：面板的「项目端口」和 `BEIYUN_ADDR` 里的端口要一致；只想让 Nginx 反代时把 `BEIYUN_ADDR` 绑 `127.0.0.1`，否则 8787 会直接暴露到公网，而客户端的 `X-Forwarded-For` 是可伪造的，限流会失效。
+- **目录权限**：面板默认用 `www` 用户跑项目，`data` 目录属主必须是它，否则 SQLite 打不开会直接退出：`chown -R www:www /www/wwwroot/byyd/data`。
+- **域名与 HTTPS**：在项目里绑域名，或在「网站」里加反向代理指向 `http://127.0.0.1:8787`，两处都开 SSL 即可。
+- **更新**：面板停项目 → 覆盖二进制（同名直接 `scp`）→ 启项目。数据库迁移只做加法，旧二进制也能读新库，回滚就是换回上一个文件。
+- **备份**：把 `server/deploy/backup.sh` 传上去，用面板「计划任务 → Shell 脚本」加每日任务：
+  ```bash
+  BEIYUN_BACKUP_KEEP_DAYS=14 /www/wwwroot/byyd/backup.sh /www/wwwroot/byyd/data/app.db /www/backup/byyd
+  ```
+- `data/` 已在 `.gitignore` 里，别把线上库提交回仓库。
 
 ### 回滚
 
