@@ -20,14 +20,6 @@ final class Prefs {
         this.sp = context.getApplicationContext().getSharedPreferences(FILE, Context.MODE_PRIVATE);
     }
 
-    String siteUrl() {
-        return sp.getString("site_url", "");
-    }
-
-    boolean configured() {
-        return !siteUrl().isEmpty();
-    }
-
     int hour() {
         return sp.getInt("hour", 21);
     }
@@ -49,9 +41,17 @@ final class Prefs {
         sp.edit().putString("last_day", day).apply();
     }
 
-    void save(String url, int hour, int minute, boolean enabled) {
+    /** 通知权限只主动申请一次，被拒之后不再每次启动都弹。 */
+    boolean askedNotifications() {
+        return sp.getBoolean("asked_notifications", false);
+    }
+
+    void setAskedNotifications() {
+        sp.edit().putBoolean("asked_notifications", true).apply();
+    }
+
+    void save(int hour, int minute, boolean enabled) {
         sp.edit()
-                .putString("site_url", url)
                 .putInt("hour", hour)
                 .putInt("minute", minute)
                 .putBoolean("enabled", enabled)

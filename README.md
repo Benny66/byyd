@@ -363,7 +363,9 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 
 也可以直接用 Android Studio 打开 `android/` 目录（自带 wrapper，不依赖本机 gradle）。
 
-**首次启动**会要求填两样东西：站点地址（如 `https://byyd.example.com`）和提醒时间（默认 21:30）。之后改动通过「长按桌面图标 → 提醒设置」（Android 7.1+ 的快捷方式）。
+**站点地址烧进 APK**（`android/app/build.gradle` 里的 `DEFAULT_SITE_URL`，当前 `https://by.bennywen.xyz`），第一次打开直接进页面，不需要任何配置。换域名要改这一行重新编译。
+
+提醒时间默认 21:30，改动走「长按桌面图标 → 提醒设置」（Android 7.1+ 的快捷方式）。
 
 **提醒的判断逻辑**：每天到点检查网页 localStorage 里最近一条记录的归属日，等于今天（Asia/Shanghai）就跳过，否则发「今天还没完成训练」。App 在前台时每 60 秒重读一次，所以练完不会紧接着被打扰。
 

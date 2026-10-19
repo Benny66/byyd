@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.text.InputType;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -23,14 +22,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * 套壳主界面：全屏 WebView 加载已部署的站点，外加一个每日提醒。
+ * 站点地址来自 BuildConfig，第一次打开不需要任何配置。
  * 页面本身不改造，训练数据仍在网页的 localStorage 里；这里只读它来判断「今天练没练」。
  */
 public class MainActivity extends Activity {
@@ -121,12 +119,13 @@ public class MainActivity extends Activity {
             }
         });
 
+        loadSite();
         ReminderScheduler.schedule(this);
+        maybeAskNotifications();
 
-        if (ACTION_SETTINGS.equals(getIntent().getAction()) || !prefs.configured()) {
+        if (ACTION_SETTINGS.equals(getIntent().getAction())) {
             web.post(this::showSettings);
         }
-        loadSite();
     }
 
     @Override
@@ -169,13 +168,9 @@ public class MainActivity extends Activity {
     }
 
     private void loadSite() {
-        if (!prefs.configured()) {
-            showSettings();
-            return;
-        }
         errorView.setVisibility(View.GONE);
         progress.setVisibility(View.VISIBLE);
-        web.loadUrl(prefs.siteUrl());
+        web.loadUrl(BuildConfig.DEFAULT_SITE_URL);
     }
 
     private void readLastTrainingDay() {
@@ -201,7 +196,7 @@ public class MainActivity extends Activity {
         return "null".equals(value) ? "" : value;
     }
 
-    /* ------------------------------------------------------------ 设置 */
+    /* ------------------------------------------------------------ 提醒设置 */
 
     private void showSettings() {
         float density = getResources().getDisplayMetrics().density;
@@ -211,16 +206,10 @@ public class MainActivity extends Activity {
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(pad, pad, pad, 0);
 
-        EditText url = new EditText(this);
-        url.setHint(R.string.settings_url_hint);
-        url.setText(prefs.siteUrl());
-        url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-        box.addView(url);
-
         final int[] time = {prefs.hour(), prefs.minute()};
         TextView timeLabel = new TextView(this);
-        timeLabel.setPadding(0, pad, 0, 0);
         timeLabel.setText(getString(R.string.settings_time, time[0], time[1]));
+        timeLabel.setPadding(0, 0, 0, pad);
         timeLabel.setOnClickListener(v -> new TimePickerDialog(
                 this,
                 (view, h, m) -> {
@@ -238,47 +227,37 @@ public class MainActivity extends Activity {
 
         TextView note = new TextView(this);
         note.setPadding(0, pad, 0, 0);
-        note.setText(R.string.settings_note);
+        note.setText(getString(R.string.settings_note, BuildConfig.DEFAULT_SITE_URL));
         note.setTextSize(12);
         box.addView(note);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle(R.string.settings_title)
                 .setView(box)
-                .setPositiveButton(R.string.action_save, null);
-        if (prefs.configured()) {
-            builder.setNegativeButton(R.string.action_cancel, null);
-        }
-        AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(prefs.configured());
-        dialog.setCancelable(prefs.configured());
-        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                .setOnClickListener(v -> {
-                    String site = normalizeUrl(url.getText().toString());
-                    if (site == null) {
-                        Toast.makeText(this, R.string.toast_bad_url, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    prefs.save(site, time[0], time[1], enabled.isChecked());
+                .setPositiveButton(R.string.action_save, (d, w) -> {
+                    prefs.save(time[0], time[1], enabled.isChecked());
                     ReminderScheduler.schedule(this);
-                    dialog.dismiss();
                     ensureNotificationPermission();
                     guideExactAlarm();
-                    loadSite();
-                }));
-        dialog.show();
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 
-    /** 允许省略协议，默认补 https://；非法输入返回 null。 */
-    private static String normalizeUrl(String raw) {
-        String value = raw == null ? "" : raw.trim();
-        if (value.isEmpty()) {
-            return null;
+    private void maybeAskNotifications() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
         }
-        if (!value.startsWith("http://") && !value.startsWith("https://")) {
-            value = "https://" + value;
+        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            return;
         }
-        return Uri.parse(value).getHost() == null ? null : value;
+        // 只在第一次问，被拒之后不再骚扰，改为在设置里提示
+        if (prefs.askedNotifications()) {
+            return;
+        }
+        prefs.setAskedNotifications();
+        requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATIONS);
     }
 
     private void ensureNotificationPermission() {
@@ -290,6 +269,37 @@ public class MainActivity extends Activity {
             return;
         }
         requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATIONS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+        if (requestCode != REQ_NOTIFICATIONS) {
+            return;
+        }
+        boolean granted = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
+        if (granted) {
+            return;
+        }
+        // 当场解释一次，否则用户会以为「设了提醒但不响」是 Bug
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.notify_denied_title)
+                .setMessage(R.string.notify_denied_message)
+                .setPositiveButton(R.string.notify_denied_go, (d, w) -> {
+                    // 通知设置页是 API 26 才有的，低版本退到应用详情页
+                    Intent intent = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                            ? new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName())
+                            : new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                    Uri.parse("package:" + getPackageName()));
+                    try {
+                        startActivity(intent);
+                    } catch (Exception ignored) {
+                        // 个别 ROM 没有这个页面
+                    }
+                })
+                .setNegativeButton(R.string.exact_alarm_later, null)
+                .show();
     }
 
     private void guideExactAlarm() {
