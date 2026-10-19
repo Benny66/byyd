@@ -49,13 +49,16 @@ public class MainActivity extends Activity {
                     + "return last;}catch(e){return '';}})()";
 
     /**
-     * 判断训练是否进行中：倒计时数字在变说明在跑；完成屏出现说明结束了。
-     * 暂停时数字不变，但我们保持横屏，避免练到一半被转回竖屏。
+     * 判断是否在训练：看主按钮的图标。运行中显示暂停图标（两竖条，路径以 M7 5h4v14 开头），
+     * 停止/暂停时是播放三角。比盯倒计时数字稳——页面加载前 .countdown 是空的，
+     * 加载完变成 00:05 会被误判成「数字在变 = 训练中」。
+     * 返回 "playing|finished"。
      */
     private static final String JS_TRAINING_STATE =
-            "(function(){try{var cd=document.querySelector('.countdown');"
+            "(function(){try{var p=document.querySelector('.btn-main svg path');"
+                    + "var playing=p&&(p.getAttribute('d')||'').indexOf('M7 5h4v14')===0;"
                     + "var fin=document.querySelector('.finish.show');"
-                    + "return (cd?cd.textContent.trim():'')+'|'+(fin?'1':'0');}catch(e){return '|0';}})()";
+                    + "return (playing?'1':'0')+'|'+(fin?'1':'0');}catch(e){return '0|0';}})()";
 
     private WebView web;
     private ProgressBar progress;
@@ -78,8 +81,6 @@ public class MainActivity extends Activity {
     /** 训练中强制横屏用的状态。 */
     private boolean trainingActive;
     private boolean landscapeNow;
-    /** null 表示还没采到第一次样本，第一帧不能算「数字变化」。 */
-    private String lastCountdown;
 
     private final Runnable phasePoll = new Runnable() {
         @Override
@@ -89,7 +90,7 @@ public class MainActivity extends Activity {
         }
     };
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "SourceLockedOrientationActivity"})
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -106,6 +107,9 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // 训练全程不熄屏，网页里的 Wake Lock 在 WebView 下不一定生效，这里兜底
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // 进 App 先竖屏；点开始后才切横屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
@@ -125,6 +129,9 @@ public class MainActivity extends Activity {
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
+                // 页面重载意味着会话从头开始，方向也回到竖屏
+                trainingActive = false;
+                applyOrientation(false);
                 readLastTrainingDay();
             }
 
@@ -242,19 +249,15 @@ public class MainActivity extends Activity {
             if (separator < 0) {
                 return;
             }
-            String countdown = payload.substring(0, separator);
+            boolean playing = "1".equals(payload.substring(0, separator));
             boolean finished = "1".equals(payload.substring(separator + 1));
 
             if (finished) {
                 trainingActive = false;
-            } else if (lastCountdown == null) {
-                // 第一帧只记基线：首屏静止在「00:05」时不能误判成正在训练
-                lastCountdown = countdown;
-            } else if (!countdown.isEmpty() && !countdown.equals(lastCountdown)) {
+            } else if (playing) {
+                // 一旦开练就保持横屏，中途暂停不退出，避免练到一半被转回竖屏
                 trainingActive = true;
             }
-            lastCountdown = countdown;
-
             applyOrientation(trainingActive && prefs.autoLandscape());
         });
     }
@@ -264,10 +267,10 @@ public class MainActivity extends Activity {
             return;
         }
         landscapeNow = landscape;
-        // SENSOR_LANDSCAPE 左右两个方向都跟，手机横放哪边都行
+        // 训练中锁横屏（左右两个方向都跟）；其余时间固定竖屏，进 App 就是竖的
         setRequestedOrientation(landscape
                 ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                : ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     private void exitCustomView() {

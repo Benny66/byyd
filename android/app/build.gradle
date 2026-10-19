@@ -11,8 +11,8 @@ android {
         applicationId 'com.bennywen.beiyun'
         minSdk 24
         targetSdk 35
-        versionCode 4
-        versionName '1.3'
+        versionCode 5
+        versionName '1.4'
 
         // 站点地址烧进 APK，第一次打开不用配置；换域名要改这里重新编译
         buildConfigField 'String', 'DEFAULT_SITE_URL', '"https://by.bennywen.xyz"'
