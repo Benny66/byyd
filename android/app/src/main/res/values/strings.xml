@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">备孕 32 分钟</string>
+    <string name="shortcut_settings">提醒设置</string>
+
+    <string name="error_message">打不开页面\n检查网络，或长按桌面图标 → 提醒设置，确认地址</string>
+    <string name="retry">重试</string>
+
+    <string name="settings_title">提醒设置</string>
+    <string name="settings_url_hint">https://你的域名</string>
+    <string name="settings_time">提醒时间：%1$02d:%2$02d（点击修改）</string>
+    <string name="settings_enabled">每天提醒（今天练过就不提醒）</string>
+    <string name="settings_note">地址填宝塔里部署的域名，例如 https://byyd.example.com</string>
+    <string name="action_save">保存</string>
+    <string name="action_cancel">取消</string>
+    <string name="toast_bad_url">地址要填 http(s):// 开头</string>
+
+    <string name="exact_alarm_title">允许精确提醒</string>
+    <string name="exact_alarm_message">部分系统默认把闹钟推迟一两个小时。如果希望准点收到提醒，需要在「闹钟和提醒」里允许本应用。</string>
+    <string name="exact_alarm_go">去设置</string>
+    <string name="exact_alarm_later">稍后</string>
+
+    <!-- 锁屏可见，文案保持中性，不出现「备孕」字样 -->
+    <string name="notify_title">今天还没完成训练</string>
+    <string name="notify_text">32 分钟 · 点开直接开始</string>
+    <string name="channel_name">训练提醒</string>
+    <string name="channel_desc">每天固定时刻提醒完成训练</string>
+</resources>

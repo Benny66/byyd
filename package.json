@@ -15,6 +15,7 @@
     "build:linux:amd64": "cd server && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags \"-s -w\" -o ../bin/beiyun-server-linux-amd64 ./cmd/server",
     "build:linux:arm64": "cd server && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -ldflags \"-s -w\" -o ../bin/beiyun-server-linux-arm64 ./cmd/server",
     "serve:server": "cd server && BEIYUN_ADDR=:8787 BEIYUN_DB_PATH=./data/app.db go run ./cmd/server",
+    "android:release": "cd android && JAVA_HOME=${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Contents/Home} ./gradlew :app:assembleRelease",
     "checkin:core": "node --experimental-strip-types qa/checkin-core.mjs",
     "typecheck": "nuxt typecheck",
     "prepare:types": "nuxt prepare",

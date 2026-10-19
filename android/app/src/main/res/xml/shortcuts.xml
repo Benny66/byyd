@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:shortcutId="settings"
+        android:shortcutLongLabel="@string/shortcut_settings"
+        android:shortcutShortLabel="@string/shortcut_settings">
+        <intent
+            android:action="com.bennywen.beiyun.SETTINGS"
+            android:targetClass="com.bennywen.beiyun.MainActivity"
+            android:targetPackage="com.bennywen.beiyun" />
+    </shortcut>
+</shortcuts>

@@ -16,16 +16,18 @@ Nuxt 4 前端 + Go 服务端：前端预渲染为静态资源并被内嵌进单�
 - **打卡记录**：每次完整训练写一条记录，同一天可多次；今日次数/分钟、连续天数、近 6 周日历
 - **全局周榜**：按“本周有效训练天数”排名，并列比分钟；昵称 + 显式上榜开关，默认不上传
 - **离线优先**：本地先落盘，待同步队列在联网后自动补传；清缓存或换设备会变成新用户
+- **安卓套壳与提醒**：643 KB 的 WebView 套壳，每天固定时刻本地通知；今天练过就不提醒
 
 ## 技术栈
 
 | 项 | 选型 |
 | --- | --- |
 | 前端 | Nuxt 4.6 / Vue 3.5，Nitro `static` preset 预渲染 |
-| 语言 | TypeScript（strict）+ Go 1.22+ |
+| 语言 | TypeScript（strict）+ Go 1.26+ |
 | 服务端 | Go 标准库 `net/http` + `embed.FS`，单二进制 |
 | 数据库 | SQLite（`modernc.org/sqlite`，纯 Go 免 CGO，WAL） |
 | 样式 | 原生 CSS（vmin 版面 + 主题变量），无 UI 框架 |
+| 安卓壳 | Java + 平台 API，无 AndroidX、无第三方依赖 |
 | 依赖 | 前端无运行时第三方依赖、无外部音频文件；服务端仅 SQLite 驱动 |
 
 ## 快速开始
@@ -52,6 +54,9 @@ npm run serve:server  # 另开一个终端：Go 服务 http://127.0.0.1:8787
 | `npm run generate` | 预渲染整站 |
 | `npm run build:dist` | 构建并导出到 `dist/` |
 | `npm run build:server` | 构建前端 → 同步进 `server/internal/web/dist` → 编译 `bin/beiyun-server` |
+| `npm run build:linux` | 交叉编译 Linux 的 amd64 + arm64（部署到服务器用） |
+| `npm run build:linux:amd64` / `:arm64` | 只出一个架构 |
+| `npm run android:release` | 编译安卓套壳 APK（`android/app/build/outputs/apk/release/`） |
 | `npm run checkin:core` | 用 Node 22 直接跑打卡纯函数测试 |
 | `npm run pack` | 构建 → 导出 → 打静态 zip（不含打卡与榜单，仅离线计时用） |
 | `npm run preview` | 预览构建产物 |
@@ -122,7 +127,17 @@ server/
 ├── internal/store/store.go    # SQLite、迁移、聚合查询
 ├── internal/web/web.go        # embed 前端产物
 ├── internal/web/dist/         # 由 scripts/sync-web.mjs 同步（不入库）
-└── deploy/                    # systemd unit / Caddyfile / 备份脚本
+└── deploy/                    # systemd unit / Caddyfile / nginx / 备份脚本
+
+android/
+├── app/src/main/java/.../beiyun/
+│   ├── MainActivity.java      # 全屏 WebView + 地址/提醒时间设置
+│   ├── ReminderScheduler.java # 每天固定时刻的一次性精确闹钟
+│   ├── ReminderReceiver.java  # 到点判断「今天练过没」，没练才发通知
+│   ├── BootReceiver.java      # 重启/升级后重排闹钟
+│   └── Prefs.java             # 站点地址、提醒时间、最近训练日
+├── app/src/main/res/          # 图标、布局、文案
+└── gradlew                    # 不依赖本机 gradle，Android Studio 可直接打开 android/
 
 scripts/sync-web.mjs           # dist → server/internal/web/dist
 qa/                            # CDP 与接口校验脚本
@@ -332,6 +347,41 @@ python3 -m http.server -d dist 4173
 但**打卡上榜不可用**（没有 `/api`），本地记录与今日统计仍然正常。`npm run pack` 打出的静态 zip 同理，只适合离线计时。
 
 > **不能双击 `index.html` 打开。** 页面用 ES Module 加载，`file://` 下浏览器按 CORS 拦截模块脚本，只剩预渲染快照。必须通过 http 访问。
+
+## Android 套壳 App（每日提醒）
+
+Web 端没法可靠地推提醒：安卓上 Web Push 依赖 GMS，iOS 要装到主屏才勉强可用。所以用一个极薄的套壳 App 承载提醒——只有全屏 WebView + 系统本地通知，693 KB，无第三方依赖。
+
+页面本身完全没改，训练数据仍在网页的 localStorage 里；App 只读它来判断「今天练过没有」。
+
+```bash
+cd android
+JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home" ./gradlew :app:assembleRelease
+# 产物：android/app/build/outputs/apk/release/app-release.apk（643 KB）
+adb install -r android/app/build/outputs/apk/release/app-release.apk
+```
+
+也可以直接用 Android Studio 打开 `android/` 目录（自带 wrapper，不依赖本机 gradle）。
+
+**首次启动**会要求填两样东西：站点地址（如 `https://byyd.example.com`）和提醒时间（默认 21:30）。之后改动通过「长按桌面图标 → 提醒设置」（Android 7.1+ 的快捷方式）。
+
+**提醒的判断逻辑**：每天到点检查网页 localStorage 里最近一条记录的归属日，等于今天（Asia/Shanghai）就跳过，否则发「今天还没完成训练」。App 在前台时每 60 秒重读一次，所以练完不会紧接着被打扰。
+
+**几个系统层面的坑**：
+
+| 问题 | 处理 |
+| --- | --- |
+| Android 13+ 通知默认关闭 | 保存设置时申请 `POST_NOTIFICATIONS` |
+| Android 12+ 精确闹钟需授权，否则可能晚 1–2 小时 | 检测 `canScheduleExactAlarms`，未授权时弹窗引导到系统设置，并降级为不精确闹钟 |
+| 重启后闹钟被清空 | `BootReceiver` 监听 `BOOT_COMPLETED` 与 `MY_PACKAGE_REPLACED` 重排 |
+| 国产 ROM 杀后台 | 需手动在系统设置里允许「自启动 / 后台运行」 |
+
+若干设计取舍：
+
+- **通知文案中性**：锁屏是公开界面，写「今天还没完成训练」而不是「该做备孕训练了」。
+- **不做 Web Push**：要服务端存订阅 + 定时任务，可靠性还不如本地闹钟。
+- **不做账号**：WebView 的 localStorage 就是数据中心，换设备靠导出（还没做）。
+- **限制**：iOS 用不了；在浏览器里训练不会同步给 App，那条提醒会照发。
 
 ## 自动化验证
 

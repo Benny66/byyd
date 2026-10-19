@@ -1,0 +1,35 @@
+// 套壳 App：只有一个 WebView + 本地提醒，不引第三方依赖。
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.bennywen.beiyun'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.bennywen.beiyun'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        release {
+            // 自用侧载，不做混淆，出问题方便看堆栈
+            minifyEnabled false
+            // 没有自己的签名证书，先用 debug 签名，能直接装
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+    }
+}
