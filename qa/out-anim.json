@@ -1,0 +1,71 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "samples": [
+    {
+      "n": 2,
+      "opacity": [
+        1,
+        0
+      ],
+      "visible": [
+        1
+      ]
+    },
+    {
+      "n": 2,
+      "opacity": [
+        0,
+        1
+      ],
+      "visible": [
+        2
+      ]
+    },
+    {
+      "n": 2,
+      "opacity": [
+        0,
+        1
+      ],
+      "visible": [
+        2
+      ]
+    },
+    {
+      "n": 2,
+      "opacity": [
+        1,
+        0
+      ],
+      "visible": [
+        1
+      ]
+    },
+    {
+      "n": 2,
+      "opacity": [
+        1,
+        0
+      ],
+      "visible": [
+        1
+      ]
+    },
+    {
+      "n": 2,
+      "opacity": [
+        0,
+        1
+      ],
+      "visible": [
+        2
+      ]
+    }
+  ],
+  "tri": [
+    1,
+    3,
+    2
+  ],
+  "failures": []
+}

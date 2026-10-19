@@ -1,0 +1,110 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "shots": [
+    {
+      "name": "原地碎小步",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-01-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-01-2.png"
+      ]
+    },
+    {
+      "name": "换脚跳",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-02-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-02-2.png"
+      ]
+    },
+    {
+      "name": "高抬腿",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-03-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-03-2.png"
+      ]
+    },
+    {
+      "name": "后踢腿",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-04-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-04-2.png"
+      ]
+    },
+    {
+      "name": "劈砍踢膝",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-05-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-05-2.png"
+      ]
+    },
+    {
+      "name": "胯下击掌",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-06-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-06-2.png"
+      ]
+    },
+    {
+      "name": "半蹲弹震",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-07-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-07-2.png"
+      ]
+    },
+    {
+      "name": "半蹲交替撤步",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-08-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-08-2.png"
+      ]
+    },
+    {
+      "name": "深蹲回环",
+      "frames": 3,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-09-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-09-2.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-09-3.png"
+      ]
+    },
+    {
+      "name": "深蹲",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-10-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-10-2.png"
+      ]
+    },
+    {
+      "name": "空手跳绳",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-11-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-11-2.png"
+      ]
+    },
+    {
+      "name": "开合跳",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-12-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-12-2.png"
+      ]
+    },
+    {
+      "name": "休息",
+      "frames": 2,
+      "files": [
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-13-1.png",
+        "/Users/bennywen/project/bennywen/byyd/qa/shots/nuxt/fig-13-2.png"
+      ]
+    }
+  ]
+}

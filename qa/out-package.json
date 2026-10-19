@@ -1,0 +1,27 @@
+{
+  "dir": "/tmp/beiyun-verify",
+  "state": {
+    "title": "备孕每日训练 · 32 分钟",
+    "action": "原地碎小步",
+    "status": "第 1 轮 · 准备 1 / 12",
+    "countdown": "00:05",
+    "frames": 2,
+    "buttons": [
+      "开始",
+      "上一个",
+      "下一个",
+      "重播",
+      "音乐 开",
+      "声音 开",
+      "语音 开",
+      "全屏"
+    ],
+    "segs": 30,
+    "css": [
+      "ok"
+    ]
+  },
+  "after": "换脚跳",
+  "errors": [],
+  "failures": []
+}

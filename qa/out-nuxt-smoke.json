@@ -1,0 +1,397 @@
+{
+  "base": "http://127.0.0.1:8787",
+  "initial": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7|M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "exercise",
+    "tag": "准备",
+    "countdown": "00:05",
+    "totalLeft": "总剩余 32:00",
+    "status": "第 1 轮 · 准备 1 / 12",
+    "action": "原地碎小步",
+    "tips": "要点小步幅快速交替，前脚掌着地，重心放低，落地要轻",
+    "breathe": "呼吸鼻吸口呼，节奏均匀",
+    "next": "提示：5 秒后自动开始",
+    "playLabel": "开始",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 100% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "开始",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "preparing": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7|M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "exercise",
+    "tag": "准备",
+    "countdown": "00:04",
+    "totalLeft": "总剩余 31:59",
+    "status": "第 1 轮 · 准备 1 / 12",
+    "action": "原地碎小步",
+    "tips": "要点小步幅快速交替，前脚掌着地，重心放低，落地要轻",
+    "breathe": "呼吸鼻吸口呼，节奏均匀",
+    "next": "提示：5 秒后自动开始",
+    "playLabel": "暂停",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 99.948% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "暂停",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "exercising": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7|M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "exercise",
+    "tag": "动作中",
+    "countdown": "00:59",
+    "totalLeft": "总剩余 31:54",
+    "status": "第 1 轮 · 动作 1 / 12",
+    "action": "原地碎小步",
+    "tips": "要点小步幅快速交替，前脚掌着地，重心放低，落地要轻",
+    "breathe": "呼吸鼻吸口呼，节奏均匀",
+    "next": "下一个：换脚跳",
+    "playLabel": "暂停",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 99.688% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "暂停",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "paused": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7|M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "exercise",
+    "tag": "动作中",
+    "countdown": "00:59",
+    "totalLeft": "总剩余 31:54",
+    "status": "第 1 轮 · 动作 1 / 12",
+    "action": "原地碎小步",
+    "tips": "要点小步幅快速交替，前脚掌着地，重心放低，落地要轻",
+    "breathe": "呼吸鼻吸口呼，节奏均匀",
+    "next": "下一个：换脚跳",
+    "playLabel": "继续",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 99.688% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "继续",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "nextPrep": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 29 V74|M60 42 L47 27 L43 13|M60 42 L73 27 L77 13|M60 74 L55 92 L50 104|M60 74 L65 92 L60 101|M90 100 v-18 m-4 5 l4 -5 l4 5|M60 33 V78|M60 46 L48 32 L44 18|M60 46 L72 32 L76 18|M60 78 L57 100 L56 122|M60 78 L63 100 L64 122|M90 100 v-18 m-4 5 l4 -5 l4 5",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "exercise",
+    "tag": "准备",
+    "countdown": "00:05",
+    "totalLeft": "总剩余 30:55",
+    "status": "第 1 轮 · 准备 2 / 12",
+    "action": "换脚跳",
+    "tips": "要点双脚交替单脚落地，膝盖微屈缓冲，落地无声",
+    "breathe": "呼吸跳起呼气，落地吸气",
+    "next": "提示：5 秒后自动开始",
+    "playLabel": "继续",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 96.615% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "继续",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "restPhase": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 33 V82|M60 46 L46 60 L53 78|M60 46 L74 60 L67 78|M60 82 L57 104 L56 125|M60 82 L63 104 L64 125|M84 22 q7 8 0 16|M90 17 q10 11 0 23|M60 31 V82|M60 44 L45 58 L52 76|M60 44 L75 58 L68 76|M60 82 L57 104 L56 125|M60 82 L63 104 L64 125|M82 17 q9 10 0 20|M89 12 q12 13 0 26",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "rest",
+    "tag": "休息",
+    "countdown": "01:00",
+    "totalLeft": "总剩余 27:40",
+    "status": "第 1 轮 · 休息",
+    "action": "休息",
+    "tips": "喝口水，别坐下",
+    "breathe": "呼吸鼻吸口呼，让心率慢慢降下来",
+    "next": "接下来：劈砍踢膝",
+    "playLabel": "继续",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 86.458% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "继续",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 关",
+        "cls": "btn off"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "mobile": {
+    "title": "备孕每日训练 · 32 分钟",
+    "figure": "M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7|M60 31 V80|M60 45 L49 57 L53 68|M60 45 L71 56 L67 67|M60 80 L55 103 L54 125|M60 80 L68 97 L63 109|M76 100 h9|M74 109 h7",
+    "frames": 2,
+    "anim": "fig-swap-2",
+    "phase": "exercise",
+    "tag": "准备",
+    "countdown": "00:05",
+    "totalLeft": "总剩余 32:00",
+    "status": "第 1 轮 · 准备 1 / 12",
+    "action": "原地碎小步",
+    "tips": "要点小步幅快速交替，前脚掌着地，重心放低，落地要轻",
+    "breathe": "呼吸鼻吸口呼，节奏均匀",
+    "next": "提示：5 秒后自动开始",
+    "playLabel": "开始",
+    "chip": "今日未练",
+    "segments": 30,
+    "fillSegments": 30,
+    "fillClip": "inset(0px 100% 0px 0px)",
+    "finished": false,
+    "buttons": [
+      {
+        "text": "开始",
+        "cls": "btn btn-main"
+      },
+      {
+        "text": "上一个",
+        "cls": "btn"
+      },
+      {
+        "text": "下一个",
+        "cls": "btn"
+      },
+      {
+        "text": "重播",
+        "cls": "btn"
+      },
+      {
+        "text": "音乐 开",
+        "cls": "btn"
+      },
+      {
+        "text": "声音 关",
+        "cls": "btn off"
+      },
+      {
+        "text": "语音 开",
+        "cls": "btn"
+      },
+      {
+        "text": "全屏",
+        "cls": "btn"
+      }
+    ]
+  },
+  "overflow": {
+    "scrollW": 390,
+    "clientW": 390,
+    "scrollH": 844,
+    "clientH": 844
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failures": []
+}

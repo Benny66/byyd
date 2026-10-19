@@ -6,6 +6,15 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 
+# Nuxt 构建产物
+.nuxt/
+.output/
+dist/
+.data/
+.nitro/
+.cache/
+.pnpm-store/
+
 # 环境变量与本地配置
 .env
 .env.local
@@ -14,3 +23,21 @@ yarn-error.log*
 .idea/
 .vscode/
 *.swp
+
+# 打包产物
+release/
+
+# Go 服务端
+bin/
+server/data/
+server/internal/web/dist/*
+!server/internal/web/dist/.gitkeep
+
+# 运行时数据库（只忽略仓库根目录，别误伤 app/data/）
+/data/
+
+# QA 自动生成的成批截图，跑 qa/*.mjs 可重新产出
+qa/shots/nuxt/
+
+# 构建备份
+*.bak-*

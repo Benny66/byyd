@@ -1,0 +1,12 @@
+# 把域名换成自己的，Caddy 会自动申请证书
+example.com {
+	encode zstd gzip
+
+	# 前端与接口同源由 Go 提供服务，这里只做 TLS 与反代
+	reverse_proxy 127.0.0.1:8787
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+}

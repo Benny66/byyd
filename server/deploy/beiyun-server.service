@@ -1,0 +1,23 @@
+[Unit]
+Description=Beiyun daily training server (static + leaderboard API)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=beiyun
+Group=beiyun
+WorkingDirectory=/opt/beiyun
+Environment=BEIYUN_ADDR=127.0.0.1:8787
+Environment=BEIYUN_DB_PATH=/var/lib/beiyun/app.db
+Environment=TZ=Asia/Shanghai
+ExecStart=/opt/beiyun/beiyun-server
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/beiyun
+
+[Install]
+WantedBy=multi-user.target

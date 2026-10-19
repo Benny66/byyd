@@ -1,0 +1,30 @@
+{
+  "name": "beiyun-30min",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "备孕 30 分钟每日训练 · Nuxt 静态站点",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "build:dist": "nuxt build && node scripts/export-dist.mjs",
+    "build:server": "npm run build:dist && node scripts/sync-web.mjs && cd server && go build -trimpath -ldflags \"-s -w\" -o ../bin/beiyun-server ./cmd/server",
+    "serve:server": "cd server && BEIYUN_ADDR=:8787 BEIYUN_DB_PATH=./data/app.db go run ./cmd/server",
+    "checkin:core": "node --experimental-strip-types qa/checkin-core.mjs",
+    "typecheck": "nuxt typecheck",
+    "prepare:types": "nuxt prepare",
+    "pack": "npm run build:dist && node scripts/pack-dist.mjs"
+  },
+  "dependencies": {
+    "nuxt": "^4.6.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "^5.7.3",
+    "vue-tsc": "^3.3.13"
+  }
+}

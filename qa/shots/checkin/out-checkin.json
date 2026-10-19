@@ -1,0 +1,26 @@
+{
+  "failures": [],
+  "state": {
+    "chip": "今日 1 次",
+    "todayLeft": "总剩余 32:00",
+    "panelOpen": true,
+    "panelTitle": "打卡",
+    "tabs": [
+      "我的",
+      "排行榜"
+    ],
+    "stats": [],
+    "calendarCells": 0,
+    "calendarDone": 0,
+    "sessions": 0,
+    "sessionTimes": [],
+    "optinVisible": false,
+    "meCard": true,
+    "boardRows": 1,
+    "boardMeRow": true,
+    "panelError": null,
+    "finishShown": false,
+    "finishSub": "今天第 1 次 · 本周 1 天",
+    "stored": 1
+  }
+}
