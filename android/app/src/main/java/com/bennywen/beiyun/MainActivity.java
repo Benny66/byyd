@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -22,13 +23,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
  * 套壳主界面：全屏 WebView 加载已部署的站点，外加一个每日提醒。
- * 站点地址来自 BuildConfig，第一次打开不需要任何配置。
+ * 站点地址来自 BuildConfig，第一次打开直接进页面。
  * 页面本身不改造，训练数据仍在网页的 localStorage 里；这里只读它来判断「今天练没练」。
  */
 public class MainActivity extends Activity {
@@ -48,6 +50,10 @@ public class MainActivity extends Activity {
     private ProgressBar progress;
     private View errorView;
     private Prefs prefs;
+
+    /** 网页请求原生全屏时挂上来的视图，必须由宿主接管，否则 requestFullscreen 会被拒绝。 */
+    private View customView;
+    private WebChromeClient.CustomViewCallback customCallback;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable poll = new Runnable() {
@@ -117,14 +123,38 @@ public class MainActivity extends Activity {
                 progress.setProgress(newProgress);
                 progress.setVisibility(newProgress >= 100 ? View.GONE : View.VISIBLE);
             }
+
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                // 网页点「全屏」走的是 Fullscreen API，宿主不接这个回调就会被浏览器拒绝
+                if (customView != null) {
+                    callback.onCustomViewHidden();
+                    return;
+                }
+                customView = view;
+                customCallback = callback;
+                FrameLayout root = findViewById(android.R.id.content);
+                root.addView(view, new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+
+            @Override
+            public void onHideCustomView() {
+                exitCustomView();
+            }
         });
 
         loadSite();
         ReminderScheduler.schedule(this);
-        maybeAskNotifications();
 
         if (ACTION_SETTINGS.equals(getIntent().getAction())) {
-            web.post(this::showSettings);
+            web.post(() -> showSettings(false));
+        } else if (!prefs.reminderSetup()) {
+            // 第一次装完必须让用户看到提醒时间，否则默认 21:30 且无从修改
+            web.post(() -> showSettings(true));
+        } else {
+            maybeAskNotifications();
         }
     }
 
@@ -132,7 +162,7 @@ public class MainActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (ACTION_SETTINGS.equals(intent.getAction())) {
-            showSettings();
+            showSettings(false);
         }
     }
 
@@ -150,6 +180,10 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        if (customView != null) {
+            exitCustomView();
+            return;
+        }
         if (web != null && web.canGoBack()) {
             web.goBack();
         } else {
@@ -160,11 +194,25 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
+        exitCustomView();
         if (web != null) {
             web.destroy();
             web = null;
         }
         super.onDestroy();
+    }
+
+    private void exitCustomView() {
+        if (customView == null) {
+            return;
+        }
+        FrameLayout root = findViewById(android.R.id.content);
+        root.removeView(customView);
+        customView = null;
+        if (customCallback != null) {
+            customCallback.onCustomViewHidden();
+            customCallback = null;
+        }
     }
 
     private void loadSite() {
@@ -198,7 +246,10 @@ public class MainActivity extends Activity {
 
     /* ------------------------------------------------------------ 提醒设置 */
 
-    private void showSettings() {
+    /**
+     * @param firstRun true 表示首次安装后的引导，按钮换成「稍后再说」，关掉也算设置过
+     */
+    private void showSettings(boolean firstRun) {
         float density = getResources().getDisplayMetrics().density;
         int pad = (int) (20 * density);
 
@@ -234,13 +285,25 @@ public class MainActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.settings_title)
                 .setView(box)
+                .setCancelable(!firstRun)
                 .setPositiveButton(R.string.action_save, (d, w) -> {
                     prefs.save(time[0], time[1], enabled.isChecked());
+                    prefs.setReminderSetup();
                     ReminderScheduler.schedule(this);
                     ensureNotificationPermission();
                     guideExactAlarm();
                 })
-                .setNegativeButton(R.string.action_cancel, null)
+                .setNegativeButton(
+                        firstRun ? R.string.action_later : R.string.action_cancel,
+                        (d, w) -> {
+                            if (!firstRun) {
+                                return;
+                            }
+                            // 跳过也要落下默认值并标记已引导，避免每次启动都弹
+                            prefs.setReminderSetup();
+                            ReminderScheduler.schedule(this);
+                            ensureNotificationPermission();
+                        })
                 .show();
     }
 
@@ -252,7 +315,7 @@ public class MainActivity extends Activity {
                 == PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        // 只在第一次问，被拒之后不再骚扰，改为在设置里提示
+        // 只在第一次问，被拒之后不再骚扰
         if (prefs.askedNotifications()) {
             return;
         }
@@ -268,6 +331,7 @@ public class MainActivity extends Activity {
                 == PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        prefs.setAskedNotifications();
         requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATIONS);
     }
 

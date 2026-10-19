@@ -50,6 +50,15 @@ final class Prefs {
         sp.edit().putBoolean("asked_notifications", true).apply();
     }
 
+    /** 首次安装的提醒时间引导是否已走过（点保存或稍后都算）。 */
+    boolean reminderSetup() {
+        return sp.getBoolean("reminder_setup", false);
+    }
+
+    void setReminderSetup() {
+        sp.edit().putBoolean("reminder_setup", true).apply();
+    }
+
     void save(int hour, int minute, boolean enabled) {
         sp.edit()
                 .putInt("hour", hour)

@@ -12,6 +12,7 @@
     <string name="settings_note">站点地址已内置：%1$s\n换域名需要改构建配置重新编译</string>
     <string name="action_save">保存</string>
     <string name="action_cancel">取消</string>
+    <string name="action_later">稍后再说</string>
 
     <string name="notify_denied_title">通知权限被关闭</string>
     <string name="notify_denied_message">没有通知权限，到点不会提醒你。可以在系统设置里重新打开。</string>

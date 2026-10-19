@@ -363,9 +363,13 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 
 也可以直接用 Android Studio 打开 `android/` 目录（自带 wrapper，不依赖本机 gradle）。
 
-**站点地址烧进 APK**（`android/app/build.gradle` 里的 `DEFAULT_SITE_URL`，当前 `https://by.bennywen.xyz`），第一次打开直接进页面，不需要任何配置。换域名要改这一行重新编译。
+**站点地址烧进 APK**（`android/app/build.gradle` 里的 `DEFAULT_SITE_URL`，当前 `https://by.bennywen.xyz`），第一次打开直接进页面，不需要填地址。换域名要改这一行重新编译。
 
-提醒时间默认 21:30，改动走「长按桌面图标 → 提醒设置」（Android 7.1+ 的快捷方式）。
+**首次安装会弹一次提醒时间**（默认 21:30，可改，也可以「稍后再说」，之后走「长按桌面图标 → 提醒设置」）。这一步不能省：跳过引导就等于默认 21:30 且用户不知道去哪改。
+
+**页面里的「全屏」按钮在壳里需要宿主实现 `onShowCustomView`**，否则 `requestFullscreen()` 会被 WebView 拒绝、静默降级成伪全屏（看着像没反应）。`MainActivity` 已接管这个回调，返回键会先退出网页全屏。
+
+**横屏跟随系统**：清单里没有 `screenOrientation`，手机开自动旋转就会转；控制中心里锁了竖屏则始终竖屏，这一点网页侧无法覆盖。
 
 **提醒的判断逻辑**：每天到点检查网页 localStorage 里最近一条记录的归属日，等于今天（Asia/Shanghai）就跳过，否则发「今天还没完成训练」。App 在前台时每 60 秒重读一次，所以练完不会紧接着被打扰。
 
